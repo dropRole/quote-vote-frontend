@@ -1,0 +1,125 @@
+@media screen and (min-width: 376px) and (max-width: 992px) {
+  div.card {
+    padding: 16px 32px 16px 16px;
+
+    width: 85%;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  div.card {
+    padding: 16px 32px 16px 16px;
+
+    width: 100%;
+  }
+
+  div.card-wrap{
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: 25%;
+  }
+}
+
+div.card {
+  display: flex;
+
+  margin: 10px 0px;
+
+  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.15);
+  border-radius: 16px;
+}
+
+div.card-distinct {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+
+  scale: 1.1;
+
+  z-index: 2;
+
+  background-color: hsl(0, 0%, 100%);
+}
+
+div.card-blured {
+  filter: blur(2px);
+}
+
+div.card-votes {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+div.card-votes > img {
+  width: 16px;
+  height: 8px;
+
+  margin: 10px 0px;
+
+  object-fit: contain;
+
+  cursor: pointer;
+}
+
+div.card-votes > span {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 19px;
+}
+
+img.chevron-down {
+  rotate: 180deg;
+}
+
+img.chevron-disabled {
+  pointer-events: none;
+}
+
+div.quote {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+
+  padding: 5px 30px;
+}
+
+p.content {
+  margin: 0;
+}
+
+div.author {
+  display: flex;
+  align-items: center;
+
+  margin-top: 10px;
+}
+
+div.author > img {
+  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.15);
+  border-radius: 50%;
+  
+  width: 24px;
+  height: 24px;
+}
+
+p.fullname {
+  margin-left: 15px;
+
+  font-size: 12px;
+  line-height: 14px;
+  letter-spacing: 0.4px;
+}
+
+p.written {
+  text-align: right;
+
+  font-size: 12px;
+  line-height: 14px;
+  letter-spacing: 0.4px;
+}
+
+.ignore-pointer-events{
+  pointer-events: none;
+}

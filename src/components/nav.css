@@ -1,0 +1,129 @@
+@media screen and (min-width: 376px) and (max-width: 992px) {
+  nav {
+    justify-content: space-between;
+
+    padding: 40px;
+  }
+
+  div#inscription > p > img {
+    position: absolute;
+
+    top: 0px;
+    right: -20px;
+
+    background-color: transparent;
+  }
+
+  div#inscription {
+    justify-content: space-between;
+    flex-basis: 70%;
+  }
+
+  div#toolbar {
+    flex-direction: column;
+    justify-content: center;
+    justify-self: flex-end;
+  }
+
+  div#toolbar > div {
+    display: none;
+    opacity: 0;
+
+    width: 100%; 
+  }
+
+  div#toolbar > div#profileAvatar{
+    justify-content: start!important;
+    gap: 0px 20px;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  nav {
+    justify-content: space-around!important;
+  }
+
+  div#inscription {
+    flex-basis: 50%;
+  }
+
+  div#toolbar {
+    flex-direction: row;
+  }
+
+  div#toolbar > div {
+    display: flex;
+  }
+
+  div#toolbar > div#profileAvatar{
+    gap: 0px 10px;
+  }
+  
+  div#toolbar > div > img:not(.avatar) {
+    display: none;
+  }
+
+  div#toolbar > div:nth-child(2) {
+    order: 4;
+  }
+
+  div#toolbar > button {
+    order: 5;
+  }
+}
+
+nav {
+  display: flex;
+
+  top: 0;
+
+  height: min-content;
+
+  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.15);
+}
+
+div#inscription {
+  display: flex;
+  align-items: center;
+}
+
+div#inscription > p {
+  position: relative;
+}
+
+nav,
+nav > div#inscription > p,
+nav > div#toolbar > div {
+  -webkit-transition: 0.25s ease-in-out;
+  -moz-transition: 0.25s ease-in-out;
+  -o-transition: 0.25s ease-in-out;
+  transition: 0.25s ease-in-out;
+}
+
+div#toolbar {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+div#toolbar > div {
+  justify-content: space-between;
+  align-items: center;
+
+  cursor: pointer;
+}
+
+img.avatar {
+  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.15);
+  border-radius: 50%;
+
+  width: 32px;
+  height: 32px;
+}
+
+img.right-chevron {
+  width: 16px;
+  height: 8px;
+
+  transform: rotate(90deg);
+}
