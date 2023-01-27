@@ -48,7 +48,10 @@ const App: React.FC = () => {
   // fetching data from the API
   useEffect(() => {
     const fetchQuotes: Function = async () => {
-      const rnd: IQuote[] = [await getRandomQuote()];
+      let rnd: IQuote[] = [];
+
+      //if logged in user
+      if (localStorage.getItem("JWT")) rnd = [await getRandomQuote()];
 
       const recent: IQuote[] = await getQuotes("recent", "", recentLimit);
 
@@ -91,7 +94,12 @@ const App: React.FC = () => {
 
   return (
     <>
-      <Nav collapsed={collapsed} setCollapsed={setCollapsed} avatar={user.avatar} username={user.username} />
+      <Nav
+        collapsed={collapsed}
+        setCollapsed={setCollapsed}
+        avatar={user.avatar}
+        username={user.username}
+      />
       <div id="container">
         {localStorage.getItem("JWT") ? (
           <QuotesSection
