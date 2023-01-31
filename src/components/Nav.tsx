@@ -6,7 +6,6 @@ import { HamburgerButton } from "./HamburgerButton";
 import { AddButton } from "./AddButton";
 import chevron from "../assets/icons/chevron.png";
 import colouredChevron from "../assets/icons/chevron-coloured.png";
-import defaultAvatar from "../assets/icons/man.png";
 
 interface INavProps {
   collapsed: boolean;
@@ -19,7 +18,7 @@ export const Nav: React.FC<INavProps> = ({
   collapsed,
   setCollapsed,
   username,
-  avatar = defaultAvatar,
+  avatar,
 }) => {
   const nav: React.RefObject<HTMLElement> = useRef<HTMLElement>(null);
 
