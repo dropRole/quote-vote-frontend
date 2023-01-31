@@ -46,9 +46,20 @@
   .flex-basis-10 {
     flex-basis: 10% !important;
   }
-  
+
   .flex-basis-100 {
     flex-basis: 100% !important;
+  }
+
+  p#notFound > span {
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 28px;
+  }
+
+  p#notFound > img {
+    width: 128px;
+    height: 128px;
   }
 }
 
@@ -91,6 +102,17 @@
     line-height: 41px;
     letter-spacing: 0.25px;
   }
+
+  p#notFound > span {
+    font-weight: 400;
+    font-size: 28px;
+    line-height: 32px;
+  }
+
+  p#notFound > img {
+    width: 256px;
+    height: 256px;
+  }
 }
 
 :root {
@@ -123,6 +145,15 @@ section {
   font-weight: 300;
 
   color: hsl(0, 0%, 0%);
+}
+
+p#notFound {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  height: 100vh;
 }
 
 .d-flex {

@@ -4,9 +4,9 @@ import { TextButton } from "./TextButton";
 import { CardBox } from "./CardBox";
 
 interface IIntroSectionProps {
-  quotes: { random: IQuote[], recent: IQuote[]; most: IQuote[] };
+  quotes: { random: IQuote[]; recent: IQuote[]; most: IQuote[] };
   setQuotes: React.Dispatch<
-    React.SetStateAction<{ random: IQuote[], recent: IQuote[]; most: IQuote[] }>
+    React.SetStateAction<{ random: IQuote[]; recent: IQuote[]; most: IQuote[] }>
   >;
 }
 
@@ -25,7 +25,11 @@ export const IntroSection: React.FC<IIntroSectionProps> = ({
           Quotastic is free online platform for you to explore the quips,
           quotes, and proverbs. Sign up and express yourself.
         </p>
-        <TextButton btn="btn-signup" text="Sign up" clickAction={() => {}}/>
+        <TextButton
+          btn="btn-signup"
+          text="Sign up"
+          clickAction={() => (window.location.pathname = "/signup")}
+        />
       </div>
       <CardBox
         quotes={quotes}
