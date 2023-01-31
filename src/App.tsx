@@ -42,7 +42,7 @@ const App: React.FC = () => {
     most: [],
   });
 
-  const [user, setUser] = useState<IUser>({} as IUser);
+  const [user, setUser] = useState<IUser>({ avatar: defaultAvatar } as IUser);
 
   const [collapsed, setCollapsed] = useState<boolean>(false);
 
@@ -75,7 +75,7 @@ const App: React.FC = () => {
         const user: IUser = await getUserInfo();
 
         // if user uploaded an avatar
-        if (user.avatar !== "null")
+        if (user.avatar !== null)
           user.avatar = await getUserAvatar(user.avatar as string);
         else user.avatar = defaultAvatar;
 
