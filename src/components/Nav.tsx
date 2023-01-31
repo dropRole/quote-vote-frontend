@@ -90,7 +90,7 @@ export const Nav: React.FC<INavProps> = ({
         className={!localStorage.getItem("JWT") ? "flex-basis-100" : ""}
       >
         <HamburgerButton domRef={hamBtn} clickAction={collapseNavbar} />
-        <p ref={pInscription}>
+        <p ref={pInscription} onClick={() => (window.location.pathname = "/")}>
           Quote vote <img src={logo} alt="logo"></img>
         </p>
       </div>
@@ -114,27 +114,37 @@ export const Nav: React.FC<INavProps> = ({
               <span>Settings</span>
               <img src={chevron} className="right-chevron" alt=">" />
             </div>
-            <div>
+            <div
+              onClick={() => {
+                localStorage.removeItem("JWT");
+
+                window.location.pathname = "/login";
+              }}
+            >
               <span className="color-primary">Logout</span>
               <img src={colouredChevron} className="right-chevron" alt=">" />
             </div>
           </>
         ) : (
           <>
-            <div className="justify-center">
-              <TextButton
-                btn="btn-text btn-signup"
-                text="Sign up"
-                clickAction={() => {}}
-              />
-            </div>
-            <div className="justify-center">
-              <TextButton
-                btn="btn-text btn-outline"
-                text="Login"
-                clickAction={() => {}}
-              />
-            </div>
+            {window.location.pathname !== "/signup" && (
+              <div className="justify-center">
+                <TextButton
+                  btn="btn-text btn-signup"
+                  text="Sign up"
+                  clickAction={() => (window.location.pathname = "/signup")}
+                />
+              </div>
+            )}
+            {window.location.pathname !== "/login" && (
+              <div className="justify-center">
+                <TextButton
+                  btn="btn-text btn-outline"
+                  text="Login"
+                  clickAction={() => (window.location.pathname = "/login")}
+                />
+              </div>
+            )}
           </>
         )}
       </div>

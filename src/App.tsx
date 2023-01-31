@@ -5,6 +5,10 @@ import { getQuotes, getRandomQuote } from "./services/quotes/quotes-get";
 import { getUserAvatar, getUserInfo } from "./services/users/users-get";
 import { IntroSection } from "./components/IntroSection";
 import { QuotesSection } from "./containers/QuotesSection";
+import { BrowserRouter } from "react-router-dom";
+import { Routes, Route, redirect, Navigate } from "react-router";
+import { SignupLoginForm } from "./containers/SignupLoginForm";
+import notFoundAvatar from "./assets/icons/404.png";
 
 export interface IUser {
   username: string;
@@ -92,6 +96,12 @@ const App: React.FC = () => {
     fetchQuotes();
   }, [mostLimit, recentLimit]);
 
+  const authorized = () => {
+    // if logged in user
+    if (localStorage.getItem("JWT")) return redirect("/");
+  };
+  authorized();
+
   return (
     <>
       <Nav
@@ -101,37 +111,79 @@ const App: React.FC = () => {
         username={user.username}
       />
       <div id="container">
-        {localStorage.getItem("JWT") ? (
-          <QuotesSection
-            quotes={quotes}
-            setQuotes={setQuotes}
-            search="random"
-          />
-        ) : (
-          <>
-            <IntroSection quotes={quotes} setQuotes={setQuotes} />
-            <p className="h2 text-center">
-              Explore the world of <br />
-              <span className="color-primary">fantastic quotes</span>
-            </p>
-          </>
-        )}
-        <QuotesSection
-          quotes={quotes}
-          setQuotes={setQuotes}
-          limit={recentLimit}
-          setLimit={setRecentLimit}
-          search="most"
-        />
-        {localStorage.getItem("JWT") && (
-          <QuotesSection
-            quotes={quotes}
-            setQuotes={setQuotes}
-            search="recent"
-            limit={mostLimit}
-            setLimit={setMostLimit}
-          />
-        )}
+        <BrowserRouter>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <>
+                  {localStorage.getItem("JWT") ? (
+                    <QuotesSection
+                      quotes={quotes}
+                      setQuotes={setQuotes}
+                      search="random"
+                    />
+                  ) : (
+                    <>
+                      <IntroSection quotes={quotes} setQuotes={setQuotes} />
+                      <p className="h2 text-center">
+                        Explore the world of <br />
+                        <span className="color-primary">fantastic quotes</span>
+                      </p>
+                    </>
+                  )}
+                  <QuotesSection
+                    quotes={quotes}
+                    setQuotes={setQuotes}
+                    limit={recentLimit}
+                    setLimit={setRecentLimit}
+                    search="most"
+                  />
+                  {localStorage.getItem("JWT") && (
+                    <QuotesSection
+                      quotes={quotes}
+                      setQuotes={setQuotes}
+                      search="recent"
+                      limit={mostLimit}
+                      setLimit={setMostLimit}
+                    />
+                  )}
+                </>
+              }
+            />
+            <Route
+              path="/signup"
+              element={
+                localStorage.getItem("JWT") ? (
+                  <Navigate to="/" />
+                ) : (
+                  <SignupLoginForm state="signup" />
+                )
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                localStorage.getItem("JWT") ? (
+                  <Navigate to="/" />
+                ) : (
+                  <SignupLoginForm state="login" />
+                )
+              }
+            />
+            <Route
+              path="*"
+              element={
+                <>
+                  <p id="notFound">
+                    <img src={notFoundAvatar} alt="avatar" />
+                    <span>The page was not found</span>
+                  </p>
+                </>
+              }
+            />
+          </Routes>
+        </BrowserRouter>
       </div>
       <Footer />
     </>
