@@ -12,14 +12,14 @@ interface INavProps {
   collapsed: boolean;
   setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
   username: string;
-  avatar: Blob | undefined;
+  avatar: Blob | string;
 }
 
 export const Nav: React.FC<INavProps> = ({
   collapsed,
   setCollapsed,
   username,
-  avatar,
+  avatar = defaultAvatar,
 }) => {
   const nav: React.RefObject<HTMLElement> = useRef<HTMLElement>(null);
 
@@ -100,7 +100,11 @@ export const Nav: React.FC<INavProps> = ({
             <AddButton domRef={addBtn} clickAction={Function} />
             <div id="profileAvatar">
               <img
-                src={avatar ? URL.createObjectURL(avatar) : defaultAvatar}
+                src={
+                  typeof avatar === "string"
+                    ? avatar
+                    : URL.createObjectURL(avatar)
+                }
                 className="avatar"
                 alt="avatar"
               />
