@@ -33,8 +33,7 @@ export const QuotesSection: React.FC<IQuotesSectionProps> = ({
   switch (search) {
     case "random":
       inscription = "Quote of the day";
-      explication =
-        "Quote of the day is randomly choosen quote..";
+      explication = "Quote of the day is randomly choosen quote..";
       break;
 
     case "recent":
@@ -63,7 +62,7 @@ export const QuotesSection: React.FC<IQuotesSectionProps> = ({
     // if ref object instantiated
     if (cardBox.current && limit && setLimit) {
       setLimit(cardBox.current.querySelectorAll("div.card").length + 10);
-      
+
       const loaded: IQuote[] = await getQuotes(search, author, limit);
 
       switch (search) {
@@ -122,7 +121,11 @@ export const QuotesSection: React.FC<IQuotesSectionProps> = ({
             text={
               localStorage.getItem("JWT") ? "Load more" : "Sign up to see more"
             }
-            clickAction={() => loadQuotes(search, "")}
+            clickAction={
+              localStorage.getItem("JWT")
+                ? () => loadQuotes(search, "")
+                : () => (window.location.pathname = "/signup")
+            }
             domRef={loadMoreButton}
           />
         </p>

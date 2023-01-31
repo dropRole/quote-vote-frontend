@@ -29,18 +29,18 @@
     display: none;
     opacity: 0;
 
-    width: 100%; 
+    width: 100%;
   }
 
-  div#toolbar > div#profileAvatar{
-    justify-content: start!important;
+  div#toolbar > div#profileAvatar {
+    justify-content: start !important;
     gap: 0px 20px;
   }
 }
 
 @media screen and (min-width: 992px) {
   nav {
-    justify-content: space-around!important;
+    justify-content: space-around !important;
   }
 
   div#inscription {
@@ -55,10 +55,10 @@
     display: flex;
   }
 
-  div#toolbar > div#profileAvatar{
+  div#toolbar > div#profileAvatar {
     gap: 0px 10px;
   }
-  
+
   div#toolbar > div > img:not(.avatar) {
     display: none;
   }
@@ -89,6 +89,8 @@ div#inscription {
 
 div#inscription > p {
   position: relative;
+
+  cursor: pointer;
 }
 
 nav,
