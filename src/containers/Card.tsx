@@ -36,19 +36,19 @@ export const Card: React.FC<ICardProps> = ({
   wrap,
   voteOnQuote,
 }) => {
-  const [userAvatar, setUsetAvatar] = useState<Blob | string>(defaultAvatar);
+  const [userAvatar, setUserAvatar] = useState<Blob | string>(defaultAvatar);
 
   useEffect(() => {
     // if user has an avatar
-    if (avatar) {
+    if (avatar !== "null") {
       const fetchUserAvatar = async () => {
         const image = await getUserAvatar(avatar);
-        
-        setUsetAvatar(image);
+
+        setUserAvatar(image);
       };
 
       fetchUserAvatar();
-    }
+    } else setUserAvatar(defaultAvatar);
   }, [avatar]);
 
   return (

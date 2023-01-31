@@ -1,4 +1,4 @@
-import { IUser } from "../../App";
+import defaultAvatar from "../../assets/icons/man.png";
 
 // get user basic info
 export const getUserInfo = async (): Promise<{
@@ -16,15 +16,23 @@ export const getUserInfo = async (): Promise<{
     headers,
   };
 
-  let response: Response, user: { username: string, name: string, surname: string, email: string, avatar: string };;
+  let response: Response,
+    user: {
+      username: string;
+      name: string;
+      surname: string;
+      email: string;
+      avatar: string;
+    };
   try {
     response = await fetch("http://localhost:3000/auth/me", requestOptions);
   } catch (error) {
-    return { username: '', name: '', surname: '', email: '', avatar: '' };
+    return { username: "", name: "", surname: "", email: "", avatar: "" };
   }
 
   // if unauthorized
-  if (response.status === 401) return { username: '', name: '', surname: '', email: '', avatar: '' };
+  if (response.status === 401)
+    return { username: "", name: "", surname: "", email: "", avatar: "" };
 
   user = await response.json();
 
@@ -32,7 +40,7 @@ export const getUserInfo = async (): Promise<{
 };
 
 // stream user avatar
-export const getUserAvatar = async (path: string): Promise<Blob> => {
+export const getUserAvatar = async (path: string): Promise<Blob | string> => {
   const headers: Headers = new Headers();
   headers.append("Content-Type", "image/*");
 
@@ -48,11 +56,11 @@ export const getUserAvatar = async (path: string): Promise<Blob> => {
       requestOptions
     );
   } catch (error) {
-    return new Blob(undefined);
+    return defaultAvatar;
   }
 
   // if unauthorized
-  if (response.status === 401) return new Blob(undefined);
+  if (response.status === 401) return defaultAvatar;
 
   return await response.blob();
 };

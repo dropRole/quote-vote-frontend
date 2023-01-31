@@ -5,13 +5,14 @@ import { getQuotes, getRandomQuote } from "./services/quotes/quotes-get";
 import { getUserAvatar, getUserInfo } from "./services/users/users-get";
 import { IntroSection } from "./components/IntroSection";
 import { QuotesSection } from "./containers/QuotesSection";
+import defaultAvatar from "./assets/icons/man.png";
 
 export interface IUser {
   username: string;
   name: string;
   surname: string;
   email: string;
-  avatar: Blob;
+  avatar: Blob | string;
 }
 
 export interface IQuote {
@@ -67,22 +68,19 @@ const App: React.FC = () => {
     // if logged in user
     if (localStorage.getItem("JWT")) {
       const fetchUserData: Function = async () => {
-        const user: {
-          username: string;
-          name: string;
-          surname: string;
-          email: string;
-          avatar: string;
-        } = await getUserInfo();
+        const user: IUser = await getUserInfo();
 
-        const avatar = await getUserAvatar(user.avatar);
+        // if user uploaded an avatar
+        if (user.avatar !== "null")
+          user.avatar = await getUserAvatar(user.avatar as string);
+        else user.avatar = defaultAvatar;
 
         setUser({
           username: user.username,
           name: user.name,
           surname: user.surname,
           email: user.email,
-          avatar,
+          avatar: user.avatar,
         });
       };
 
