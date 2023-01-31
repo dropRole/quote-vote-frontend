@@ -40,7 +40,7 @@ export const Card: React.FC<ICardProps> = ({
 
   useEffect(() => {
     // if user has an avatar
-    if (avatar !== "null") {
+    if (avatar !== null) {
       const fetchUserAvatar = async () => {
         const image = await getUserAvatar(avatar);
 
