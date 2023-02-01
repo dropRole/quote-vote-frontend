@@ -19,13 +19,14 @@
   }
 
   div.box-one > div {
-    flex-basis: 29% !important;
     flex-grow: 0 !important;
   }
 }
 
 div.card-box {
   display: flex;
+  justify-content: center;
+  align-items: center;
 
   position: relative;
 }

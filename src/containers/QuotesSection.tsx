@@ -33,7 +33,7 @@ export const QuotesSection: React.FC<IQuotesSectionProps> = ({
   switch (search) {
     case "random":
       inscription = "Quote of the day";
-      explication = "Quote of the day is randomly choosen quote..";
+      explication = "Quote of the day is randomly choosen quote.";
       break;
 
     case "recent":
