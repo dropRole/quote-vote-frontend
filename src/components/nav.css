@@ -16,7 +16,7 @@
 
   div#inscription {
     justify-content: space-between;
-    flex-basis: 70%;
+    flex-basis: 63%;
   }
 
   div#toolbar {
@@ -80,6 +80,8 @@ nav {
   height: min-content;
 
   box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.15);
+
+  background-color: hsl(0, 0%, 100%);
 }
 
 div#inscription {
@@ -94,7 +96,7 @@ div#inscription > p {
 }
 
 nav,
-nav > div#inscription > p,
+div#inscription > p,
 nav > div#toolbar > div {
   -webkit-transition: 0.25s ease-in-out;
   -moz-transition: 0.25s ease-in-out;

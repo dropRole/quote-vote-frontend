@@ -100,7 +100,7 @@ export const QuotesSection: React.FC<IQuotesSectionProps> = ({
     }
   };
   return (
-    <section id="quotes">
+    <section className="quotes">
       <p className="h3 text-center">
         <span className="color-primary">{inscription}</span>
       </p>
