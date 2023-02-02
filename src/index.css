@@ -10,7 +10,7 @@
   }
 
   section#introSection,
-  section#quotes {
+  section.quotes {
     flex-direction: column;
     justify-content: center;
     align-items: center;
