@@ -162,7 +162,7 @@ export const SignupLoginForm: React.FC<ISignupLoginFormProps> = ({ state }) => {
         }
 
         // if succeeded
-        if (response.status === 201) window.location.pathname = "/login";
+        if (response.status === 201) window.location.href = "/login";
       }
     }
   };
@@ -187,10 +187,9 @@ export const SignupLoginForm: React.FC<ISignupLoginFormProps> = ({ state }) => {
 
       // if user logged in
       if (response.status === 201) {
-        console.log(response.jwt)
         localStorage.setItem('JWT', response.jwt)
 
-        window.location.pathname = "/";
+        window.location.href = "/";
       }
     }
   };
@@ -282,7 +281,7 @@ export const SignupLoginForm: React.FC<ISignupLoginFormProps> = ({ state }) => {
         </span>
         <span
           className="color-primary"
-          onClick={() => state === "signup" ? window.location.pathname = "/login" : window.location.pathname = '/signup'}
+          onClick={() => state === "signup" ? window.location.href = "/login" : window.location.href = '/signup'}
         >
           {state === "signup" ? "Login" : "Signup"}
         </span>

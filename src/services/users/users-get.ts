@@ -64,3 +64,25 @@ export const getUserAvatar = async (path: string): Promise<Blob | string> => {
 
   return await response.blob();
 };
+
+// get the karma stats of the given user
+export const getUserKarma = async (
+  username: string
+): Promise<{ quotes: number; karma: number }> => {
+  const requestOptions: { method: string } = { method: "GET" };
+
+  let response: Response;
+
+  try {
+    response = await fetch(
+      `http://localhost:3000/quotes/karma/${username}`,
+      requestOptions
+    );
+  } catch (error) {
+    return { quotes: 0, karma: 0 };
+  }
+
+  const userKarma: { quotes: number; karma: number } = await response.json();
+
+  return userKarma
+};

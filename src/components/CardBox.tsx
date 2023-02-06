@@ -5,15 +5,25 @@ import { voteOnQuote } from "../services/quotes/quotes-votes-patch";
 import "./card-box.css";
 
 interface ICardBoxProps {
-  quotes: { random: IQuote[]; recent: IQuote[]; most: IQuote[] };
+  quotes: {
+    random: IQuote[];
+    recent: IQuote[];
+    most: IQuote[];
+    voted: IQuote[];
+  };
   setQuotes: React.Dispatch<
-    React.SetStateAction<{ random: IQuote[]; recent: IQuote[]; most: IQuote[] }>
+    React.SetStateAction<{
+      random: IQuote[];
+      recent: IQuote[];
+      most: IQuote[];
+      voted: IQuote[];
+    }>
   >;
   renderingQuotes: IQuote[];
+  flexWrap: { basis: string };
   domRef?: React.RefObject<HTMLDivElement>;
   distinct?: number[];
   blured?: number[];
-  wrap?: boolean;
 }
 
 export const CardBox: React.FC<ICardBoxProps> = ({
@@ -21,9 +31,9 @@ export const CardBox: React.FC<ICardBoxProps> = ({
   renderingQuotes,
   quotes,
   domRef,
+  flexWrap,
   distinct,
   blured,
-  wrap,
 }) => {
   // determine the vote status
   const determineVoteOnQuote: Function = (
@@ -99,18 +109,17 @@ export const CardBox: React.FC<ICardBoxProps> = ({
         recent: quotes.recent.map(
           (q): IQuote => determineVoteOnQuote(q, id, vote)
         ),
-        most: quotes.most.map((q): IQuote => determineVoteOnQuote(q, id, vote)),
-      });
-
-      setQuotes({
-        random: quotes.random,
-        recent: quotes.recent,
-        most: quotes.most.sort((a: IQuote, b: IQuote) =>
-          a.votes_total > b.votes_total
-            ? -1
-            : a.votes_total === b.votes_total
-            ? 0
-            : 1
+        most: quotes.most
+          .map((q): IQuote => determineVoteOnQuote(q, id, vote))
+          .sort((a: IQuote, b: IQuote) =>
+            a.votes_total > b.votes_total
+              ? -1
+              : a.votes_total === b.votes_total
+              ? 0
+              : 1
+          ),
+        voted: quotes.voted.map(
+          (q): IQuote => determineVoteOnQuote(q, id, vote)
         ),
       });
     }
@@ -119,7 +128,10 @@ export const CardBox: React.FC<ICardBoxProps> = ({
   };
 
   return (
-    <div ref={domRef} className={`card-box ${ renderingQuotes.length === 1 ? 'box-one' : ''}`}>
+    <div
+      ref={domRef}
+      className={`card-box${renderingQuotes.length === 1 ? " box-one" : ""}${flexWrap.basis ? ` flex-basis-${flexWrap.basis}` : ""}`}
+    >
       {renderingQuotes.map((q, index) => {
         let distinctCard = distinct
           ? distinct.find((e) => e === index) === undefined
@@ -145,7 +157,6 @@ export const CardBox: React.FC<ICardBoxProps> = ({
             vote={q.votes_vote}
             distinct={distinctCard}
             blured={bluredCard}
-            wrap={wrap ?? false}
             voteOnQuote={upDownVote}
           />
         );

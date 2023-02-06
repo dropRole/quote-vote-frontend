@@ -1,32 +1,22 @@
 @media screen and (min-width: 376px) and (max-width: 992px) {
   div.card {
-    padding: 16px 32px 16px 16px;
-
-    width: 85%;
+    min-width: 90%;
   }
 }
 
 @media screen and (min-width: 992px) {
-  div.card {
-    padding: 16px 32px 16px 16px;
-
-    width: 100%;
-  }
-
-  div.card-wrap{
-    flex-grow: 0;
-    flex-shrink: 0;
-    flex-basis: 25%;
-  }
 }
 
 div.card {
   display: flex;
+  flex-grow: 1;
 
   margin: 10px 0px;
 
   box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.15);
   border-radius: 16px;
+
+  padding: 16px 32px 16px 16px;
 }
 
 div.card-distinct {
@@ -94,12 +84,14 @@ div.author {
   align-items: center;
 
   margin-top: 10px;
+
+  cursor: pointer;
 }
 
 div.author > img {
   box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.15);
   border-radius: 50%;
-  
+
   width: 24px;
   height: 24px;
 }
@@ -120,6 +112,6 @@ p.written {
   letter-spacing: 0.4px;
 }
 
-.ignore-pointer-events{
+.ignore-pointer-events {
   pointer-events: none;
 }

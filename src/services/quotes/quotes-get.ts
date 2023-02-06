@@ -23,7 +23,7 @@ export const getRandomQuote = async (): Promise<IQuote> => {
   // if unauthorized
   if (response.status === 401) return {} as IQuote;
 
-  return response.json()
+  return response.json();
 };
 
 // get quotes regarding the given criterions
@@ -46,8 +46,7 @@ export const getQuotes = async (
   let quotes: IQuote[], response: Response;
   try {
     response = await fetch(
-      `http://localhost:3000/quotes?search=${search}&
-        author=${author}&limit=${limit}`,
+      `http://localhost:3000/quotes?search=${search}&author=${author}&limit=${limit}`,
       requestOptions
     );
 

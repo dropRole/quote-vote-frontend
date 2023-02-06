@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import { Nav } from "./components/Nav";
 import { Footer } from "./layouts/Footer";
 import { getQuotes, getRandomQuote } from "./services/quotes/quotes-get";
-import { getUserAvatar, getUserInfo } from "./services/users/users-get";
+import { getUserInfo } from "./services/users/users-get";
 import { IntroSection } from "./components/IntroSection";
 import { QuotesSection } from "./containers/QuotesSection";
 import { BrowserRouter } from "react-router-dom";
 import { Routes, Route, redirect, Navigate } from "react-router";
 import { SignupLoginForm } from "./containers/SignupLoginForm";
 import notFoundAvatar from "./assets/icons/404.png";
-import defaultAvatar from "./assets/icons/man.png";
+import { Profile } from "./components/Profile";
 
 export interface IUser {
   username: string;
@@ -36,36 +36,44 @@ const App: React.FC = () => {
     random: IQuote[];
     recent: IQuote[];
     most: IQuote[];
+    voted: IQuote[];
   }>({
     random: [],
     recent: [],
     most: [],
+    voted: [],
   });
 
-  const [user, setUser] = useState<IUser>({ avatar: defaultAvatar } as IUser);
+  const [user, setUser] = useState<IUser>({} as IUser);
 
   const [collapsed, setCollapsed] = useState<boolean>(false);
-
-  const [recentLimit, setRecentLimit] = useState<number>(10);
-
-  const [mostLimit, setMostLimit] = useState<number>(10);
 
   // fetching data from the API
   useEffect(() => {
     const fetchQuotes: Function = async () => {
-      let rnd: IQuote[] = [];
+      let rnd: IQuote[] = [],
+        recent: IQuote[] = [],
+        most: IQuote[] = [];
 
-      //if logged in user
+      //if logged in and on profile page
+      if (
+        localStorage.getItem("JWT") &&
+        window.location.pathname === "/profile"
+      )
+        return;
+
+      // if logged in
       if (localStorage.getItem("JWT")) rnd = [await getRandomQuote()];
 
-      const recent: IQuote[] = await getQuotes("recent", "", recentLimit);
+      recent = await getQuotes("recent", "", 10);
 
-      const most: IQuote[] = await getQuotes("most", "", mostLimit);
-
+      most = await getQuotes("most", "", 10);
+        
       setQuotes({
         random: rnd,
         recent,
         most,
+        voted: [],
       });
     };
 
@@ -73,11 +81,6 @@ const App: React.FC = () => {
     if (localStorage.getItem("JWT")) {
       const fetchUserData: Function = async () => {
         const user: IUser = await getUserInfo();
-
-        // if user uploaded an avatar
-        if (user.avatar !== null)
-          user.avatar = await getUserAvatar(user.avatar as string);
-        else user.avatar = defaultAvatar;
 
         setUser({
           username: user.username,
@@ -92,7 +95,7 @@ const App: React.FC = () => {
     }
 
     fetchQuotes();
-  }, [mostLimit, recentLimit]);
+  }, []);
 
   const authorized = () => {
     // if logged in user
@@ -102,12 +105,7 @@ const App: React.FC = () => {
 
   return (
     <>
-      <Nav
-        collapsed={collapsed}
-        setCollapsed={setCollapsed}
-        avatar={user.avatar}
-        username={user.username}
-      />
+      <Nav collapsed={collapsed} setCollapsed={setCollapsed} user={user} />
       <div id="container">
         <BrowserRouter>
           <Routes>
@@ -120,10 +118,15 @@ const App: React.FC = () => {
                       quotes={quotes}
                       setQuotes={setQuotes}
                       search="random"
+                      flexWrap={{ basis: "25" }}
                     />
                   ) : (
                     <>
-                      <IntroSection quotes={quotes} setQuotes={setQuotes} />
+                      <IntroSection
+                        quotes={quotes}
+                        setQuotes={setQuotes}
+                        flexWrap={{ basis: "" }}
+                      />
                       <p className="h2 text-center">
                         Explore the world of <br />
                         <span className="color-primary">fantastic quotes</span>
@@ -133,20 +136,27 @@ const App: React.FC = () => {
                   <QuotesSection
                     quotes={quotes}
                     setQuotes={setQuotes}
-                    limit={recentLimit}
-                    setLimit={setRecentLimit}
                     search="most"
+                    flexWrap={{ basis: "25" }}
                   />
                   {localStorage.getItem("JWT") && (
                     <QuotesSection
                       quotes={quotes}
                       setQuotes={setQuotes}
                       search="recent"
-                      limit={mostLimit}
-                      setLimit={setMostLimit}
+                      flexWrap={{ basis: "25" }}
                     />
                   )}
                 </>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <Profile
+                  quotes={quotes}
+                  setQuotes={setQuotes}
+                />
               }
             />
             <Route
