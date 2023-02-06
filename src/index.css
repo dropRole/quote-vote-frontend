@@ -10,7 +10,8 @@
   }
 
   section#introSection,
-  section.quotes {
+  section.quotes,
+  div#profile {
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -79,7 +80,11 @@
     flex-grow: 0;
   }
 
-  section#quotes {
+  section#introSection div.card{
+    width: 60%;
+  }
+
+  section.quotes {
     flex-direction: column;
   }
 
@@ -174,6 +179,10 @@ p#notFound {
 
 .text-center {
   text-align: center;
+}
+
+.text-left {
+  text-align: left;
 }
 
 .color-primary {

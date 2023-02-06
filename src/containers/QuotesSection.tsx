@@ -1,26 +1,36 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { IQuote } from "../App";
 import { getQuotes } from "../services/quotes/quotes-get";
 import { CardBox } from "../components/CardBox";
 import { TextButton } from "../components/TextButton";
 
 interface IQuotesSectionProps {
-  quotes: { random: IQuote[]; recent: IQuote[]; most: IQuote[] };
+  quotes: {
+    random: IQuote[];
+    recent: IQuote[];
+    most: IQuote[];
+    voted: IQuote[];
+  };
   setQuotes: React.Dispatch<
-    React.SetStateAction<{ random: IQuote[]; recent: IQuote[]; most: IQuote[] }>
+    React.SetStateAction<{
+      random: IQuote[];
+      recent: IQuote[];
+      most: IQuote[];
+      voted: IQuote[];
+    }>
   >;
   search: string;
-  limit?: number;
-  setLimit?: React.Dispatch<React.SetStateAction<number>>;
+  flexWrap: { basis: string };
 }
 
 export const QuotesSection: React.FC<IQuotesSectionProps> = ({
   quotes,
   setQuotes,
   search,
-  limit,
-  setLimit,
+  flexWrap,
 }) => {
+  const [limit, setLimit] = useState<number>(10);
+
   const cardBox: React.RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
 
   const loadMoreButton: React.RefObject<HTMLButtonElement> =
@@ -48,6 +58,12 @@ export const QuotesSection: React.FC<IQuotesSectionProps> = ({
         "Most upvoted quotes on the platform. Sign up or login to like the quotes and keep them saved in your profile";
       break;
 
+    case "voted":
+      inscription = "Voted-on quotes";
+      explication =
+        "Most upvoted quotes on the platform. Sign up or login to like the quotes and keep them saved in your profile";
+      break;
+
     default:
       inscription = "recent";
       explication =
@@ -60,10 +76,14 @@ export const QuotesSection: React.FC<IQuotesSectionProps> = ({
     author: string = ""
   ) => {
     // if ref object instantiated
-    if (cardBox.current && limit && setLimit) {
+    if (cardBox.current) {
       setLimit(cardBox.current.querySelectorAll("div.card").length + 10);
 
-      const loaded: IQuote[] = await getQuotes(search, author, limit);
+      const loaded: IQuote[] = await getQuotes(
+        search,
+        author,
+        cardBox.current.querySelectorAll("div.card").length + 10
+      );
 
       switch (search) {
         case "recent":
@@ -71,6 +91,7 @@ export const QuotesSection: React.FC<IQuotesSectionProps> = ({
             random: quotes.random,
             recent: loaded,
             most: quotes.most,
+            voted: quotes.voted,
           });
           break;
 
@@ -79,22 +100,28 @@ export const QuotesSection: React.FC<IQuotesSectionProps> = ({
             random: quotes.random,
             recent: quotes.recent,
             most: loaded,
+            voted: quotes.voted,
+          });
+          break;
+
+        case "voted":
+          setQuotes({
+            random: quotes.random,
+            recent: quotes.recent,
+            most: quotes.most,
+            voted: loaded,
           });
           break;
       }
 
       // if loaded amount is lesser than the limit
-      if (loaded.length < limit) {
+      if (loaded.length <= limit) {
         // if ref object instantiated
         if (loadMoreButton.current)
           loadMoreButton.current.classList.add("d-none");
 
         return;
       }
-
-      // if ref object instantiated
-      if (loadMoreButton.current)
-        loadMoreButton.current.classList.remove("d-none");
 
       return;
     }
@@ -104,13 +131,15 @@ export const QuotesSection: React.FC<IQuotesSectionProps> = ({
       <p className="h3 text-center">
         <span className="color-primary">{inscription}</span>
       </p>
-      <p className="text-center">{explication}</p>
+      {window.location.pathname !== "/profile" && (
+        <p className="text-center">{explication}</p>
+      )}
       <CardBox
         quotes={quotes}
         setQuotes={setQuotes}
-        domRef={cardBox}
         renderingQuotes={quotes[quotesKey].slice(0, limit)}
-        wrap={true}
+        domRef={cardBox}
+        flexWrap={flexWrap}
       />
       {
         <p
@@ -123,8 +152,18 @@ export const QuotesSection: React.FC<IQuotesSectionProps> = ({
             }
             clickAction={
               localStorage.getItem("JWT")
-                ? () => loadQuotes(search, "")
-                : () => (window.location.pathname = "/signup")
+                ? () => {
+                    loadQuotes(
+                      search,
+                      window.location.pathname === "/profile" &&
+                        search !== "voted"
+                        ? new URL(window.location.toString()).searchParams.get(
+                            "username"
+                          )
+                        : ""
+                    );
+                  }
+                : () => (window.location.href = "/signup")
             }
             domRef={loadMoreButton}
           />

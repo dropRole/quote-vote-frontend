@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { TextButton } from "./TextButton";
 import "./nav.css";
 import logo from "../assets/icons/logo-orange.png";
@@ -6,20 +6,29 @@ import { HamburgerButton } from "./HamburgerButton";
 import { AddButton } from "./AddButton";
 import chevron from "../assets/icons/chevron.png";
 import colouredChevron from "../assets/icons/chevron-coloured.png";
+import { IUser } from "../App";
+import { getUserAvatar } from "../services/users/users-get";
+import defaultAvatar from "../assets/icons/man.png";
 
 interface INavProps {
   collapsed: boolean;
   setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
-  username: string;
-  avatar: Blob | string;
+  user: IUser;
 }
 
-export const Nav: React.FC<INavProps> = ({
-  collapsed,
-  setCollapsed,
-  username,
-  avatar,
-}) => {
+export const Nav: React.FC<INavProps> = ({ collapsed, setCollapsed, user }) => {
+  const [avatar, setAvatar] = useState<Blob | string>(defaultAvatar);
+
+  useEffect(() => {
+    const streamUserAvatar = async () => {
+      const stream = await getUserAvatar(user.avatar as string);
+      setAvatar(stream);
+    };
+
+    // if user avatar is defined
+    if (user.avatar !== undefined) streamUserAvatar();
+  }, [user.avatar]);
+
   const nav: React.RefObject<HTMLElement> = useRef<HTMLElement>(null);
 
   const toolbar: React.RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
@@ -89,7 +98,7 @@ export const Nav: React.FC<INavProps> = ({
         className={!localStorage.getItem("JWT") ? "flex-basis-100" : ""}
       >
         <HamburgerButton domRef={hamBtn} clickAction={collapseNavbar} />
-        <p ref={pInscription} onClick={() => (window.location.pathname = "/")}>
+        <p ref={pInscription} onClick={() => (window.location.href = "/")}>
           Quote vote <img src={logo} alt="logo"></img>
         </p>
       </div>
@@ -97,7 +106,16 @@ export const Nav: React.FC<INavProps> = ({
         {localStorage.getItem("JWT") ? (
           <>
             <AddButton domRef={addBtn} clickAction={Function} />
-            <div id="profileAvatar">
+            <div
+              id="profileAvatar"
+              onClick={() =>
+                (window.location.href = `/profile?username=${
+                  user.username
+                }&fullname=${`${user.name} ${user.surname}`}&avatar=${
+                  typeof avatar === "string" ? "default" : user.avatar
+                }`)
+              }
+            >
               <img
                 src={
                   typeof avatar === "string"
@@ -107,9 +125,9 @@ export const Nav: React.FC<INavProps> = ({
                 className="avatar"
                 alt="avatar"
               />
-              {username}
+              {user.username}
             </div>
-            <div>
+            <div onClick={() => (window.location.href = "/")}>
               <span>Home</span>
               <img src={chevron} className="right-chevron" alt=">" />
             </div>
@@ -121,7 +139,7 @@ export const Nav: React.FC<INavProps> = ({
               onClick={() => {
                 localStorage.removeItem("JWT");
 
-                window.location.pathname = "/login";
+                window.location.href = "/login";
               }}
             >
               <span className="color-primary">Logout</span>
@@ -135,7 +153,7 @@ export const Nav: React.FC<INavProps> = ({
                 <TextButton
                   btn="btn-text btn-signup"
                   text="Sign up"
-                  clickAction={() => (window.location.pathname = "/signup")}
+                  clickAction={() => (window.location.href = "/signup")}
                 />
               </div>
             )}
@@ -144,7 +162,7 @@ export const Nav: React.FC<INavProps> = ({
                 <TextButton
                   btn="btn-text btn-outline"
                   text="Login"
-                  clickAction={() => (window.location.pathname = "/login")}
+                  clickAction={() => (window.location.href = "/login")}
                 />
               </div>
             )}

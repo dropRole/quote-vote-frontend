@@ -4,6 +4,10 @@
 
     margin: 50px 0px;
   }
+
+  div.box-one{
+    width: 100%;
+  }
 }
 
 @media screen and (min-width: 992px) {
@@ -18,8 +22,9 @@
     justify-content: center;
   }
 
-  div.box-one > div {
-    flex-grow: 0 !important;
+  div.flex-basis-25 > div.card {
+    flex-basis: 25%;
+    flex-grow: 0;
   }
 }
 

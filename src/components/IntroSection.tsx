@@ -4,15 +4,27 @@ import { TextButton } from "./TextButton";
 import { CardBox } from "./CardBox";
 
 interface IIntroSectionProps {
-  quotes: { random: IQuote[]; recent: IQuote[]; most: IQuote[] };
+  quotes: {
+    random: IQuote[];
+    recent: IQuote[];
+    most: IQuote[];
+    voted: IQuote[];
+  };
   setQuotes: React.Dispatch<
-    React.SetStateAction<{ random: IQuote[]; recent: IQuote[]; most: IQuote[] }>
+    React.SetStateAction<{
+      random: IQuote[];
+      recent: IQuote[];
+      most: IQuote[];
+      voted: IQuote[];
+    }>
   >;
+  flexWrap: { basis: string };
 }
 
 export const IntroSection: React.FC<IIntroSectionProps> = ({
   quotes,
   setQuotes,
+  flexWrap,
 }) => {
   return (
     <section id="introSection">
@@ -28,13 +40,14 @@ export const IntroSection: React.FC<IIntroSectionProps> = ({
         <TextButton
           btn="btn-signup"
           text="Sign up"
-          clickAction={() => (window.location.pathname = "/signup")}
+          clickAction={() => (window.location.href = "/signup")}
         />
       </div>
       <CardBox
         quotes={quotes}
         setQuotes={setQuotes}
         renderingQuotes={quotes.recent.length ? quotes.recent.slice(0, 3) : []}
+        flexWrap={{ basis: '' }}
         distinct={[1]}
         blured={[0, 2]}
       />

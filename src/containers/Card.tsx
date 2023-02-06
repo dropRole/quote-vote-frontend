@@ -15,7 +15,6 @@ interface ICardProps {
   fullname: string;
   total: number;
   vote: boolean | undefined;
-  wrap: boolean;
   voteOnQuote: Function;
   blured?: boolean;
   distinct?: boolean;
@@ -33,7 +32,6 @@ export const Card: React.FC<ICardProps> = ({
   vote,
   distinct,
   blured,
-  wrap,
   voteOnQuote,
 }) => {
   const [userAvatar, setUserAvatar] = useState<Blob | string>(defaultAvatar);
@@ -54,8 +52,8 @@ export const Card: React.FC<ICardProps> = ({
   return (
     <div
       className={`card${distinct ? " card-distinct" : ""} ${
-        blured && " card-blured"
-      } ${wrap ? "card-wrap" : ""}`}
+        blured ? " card-blured" : ""
+      }`}
     >
       <div className="card-votes">
         <img
@@ -76,15 +74,22 @@ export const Card: React.FC<ICardProps> = ({
           onClick={(e) => {
             voteOnQuote(e.target, id, false);
           }}
-          className={
-            !localStorage.getItem("JWT") ? "chevron-disabled" : "chevron-down"
-          }
+          className={`chevron-down  
+            ${!localStorage.getItem("JWT") ? "chevron-disabled" : ""}
+          `}
           alt="⌄"
         />
       </div>
       <div className="quote">
         <p className="content">{quote}</p>
-        <div className="author">
+        <div
+          className="author"
+          onClick={() => {
+            window.location.href = `/profile?username=${username}&fullname=${fullname}&avatar=${
+              avatar === null ? "default" : avatar
+            }`;
+          }}
+        >
           <img
             src={
               typeof userAvatar === "string"
