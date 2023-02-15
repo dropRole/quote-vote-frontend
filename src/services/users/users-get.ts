@@ -1,7 +1,7 @@
 import defaultAvatar from "../../assets/icons/man.png";
 
 // get user basic info
-export const getUserInfo = async (): Promise<{
+export const getUserInfo: Function = async (): Promise<{
   username: string;
   name: string;
   surname: string;
@@ -40,7 +40,7 @@ export const getUserInfo = async (): Promise<{
 };
 
 // stream user avatar
-export const getUserAvatar = async (path: string): Promise<Blob | string> => {
+export const getAvatar: Function = async (path: string): Promise<Blob | string> => {
   const headers: Headers = new Headers();
   headers.append("Content-Type", "image/*");
 
@@ -66,7 +66,7 @@ export const getUserAvatar = async (path: string): Promise<Blob | string> => {
 };
 
 // get the karma stats of the given user
-export const getUserKarma = async (
+export const getUserKarma: Function = async (
   username: string
 ): Promise<{ quotes: number; karma: number }> => {
   const requestOptions: { method: string } = { method: "GET" };

@@ -1,0 +1,30 @@
+form#quote > p:nth-child(1) {
+  font-weight: 400;
+  font-size: 35px;
+  line-height: 41px;
+}
+
+form#quote > textarea {
+  align-self: stretch;
+
+  padding: 16px 24px;
+
+  gap: 8px;
+
+  border: 2px solid hsl(16, 64%, 64%);
+  border-radius: 16px;
+  outline: none;
+
+  resize: none;
+
+  font-family: "Raleway";
+}
+
+form#quote > div:last-child {
+  display: flex;
+  flex-direction: row;
+}
+
+form#quote > div:last-child > button {
+  flex-grow: 1;
+}

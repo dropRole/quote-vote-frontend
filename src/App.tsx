@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Nav } from "./components/Nav";
+import { Nav } from "./containers/Nav";
 import { Footer } from "./layouts/Footer";
 import { getQuotes, getRandomQuote } from "./services/quotes/quotes-get";
-import { getUserInfo } from "./services/users/users-get";
+import { getAvatar, getUserInfo } from "./services/users/users-get";
 import { IntroSection } from "./components/IntroSection";
 import { QuotesSection } from "./containers/QuotesSection";
 import { BrowserRouter } from "react-router-dom";
@@ -10,13 +10,18 @@ import { Routes, Route, redirect, Navigate } from "react-router";
 import { SignupLoginForm } from "./containers/SignupLoginForm";
 import notFoundAvatar from "./assets/icons/404.png";
 import { Profile } from "./components/Profile";
+import Modal from "@mui/material/Modal";
+import { Backdrop, Box, Fade } from "@mui/material";
+import { SettingsForm } from "./components/SettingsForm";
+import { quoteForm, QuoteForm } from "./components/QuoteForm";
+import defaultAvatar from "./assets/icons/man.png";
 
 export interface IUser {
   username: string;
   name: string;
   surname: string;
   email: string;
-  avatar: Blob | string;
+  avatar: string | Blob;
 }
 
 export interface IQuote {
@@ -31,6 +36,13 @@ export interface IQuote {
   votes_vote: boolean | undefined;
 }
 
+type modalContentType = "quote" | "settings";
+
+export type modalContent = {
+  type: modalContentType;
+  data: { [formType: string]: string };
+};
+
 const App: React.FC = () => {
   const [quotes, setQuotes] = useState<{
     random: IQuote[];
@@ -44,12 +56,43 @@ const App: React.FC = () => {
     voted: [],
   });
 
-  const [user, setUser] = useState<IUser>({} as IUser);
+  const [user, setUser] = useState<IUser>({ avatar: defaultAvatar } as IUser);
 
   const [collapsed, setCollapsed] = useState<boolean>(false);
 
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+
+  const [modalContent, setModalContent] = useState<modalContent>({
+    type: "quote",
+    data: {},
+  });
+
   // fetching data from the API
   useEffect(() => {
+    // if logged in user
+    if (localStorage.getItem("JWT")) {
+      const fetchUserData: Function = async () => {
+        const info: IUser = await getUserInfo();
+
+        const streamUserAvatar = async () => {
+          const stream: Blob = await getAvatar(info.avatar as string);
+
+          user.avatar = stream;
+        };
+
+        // if user avatar is defined
+        if (info.avatar) streamUserAvatar();
+        user.email = info.email;
+        user.name = info.name;
+        user.surname = info.surname;
+        user.username = info.username;
+
+        setUser(user);
+      };
+
+      fetchUserData();
+    }
+
     const fetchQuotes: Function = async () => {
       let rnd: IQuote[] = [],
         recent: IQuote[] = [],
@@ -68,7 +111,7 @@ const App: React.FC = () => {
       recent = await getQuotes("recent", "", 10);
 
       most = await getQuotes("most", "", 10);
-        
+
       setQuotes({
         random: rnd,
         recent,
@@ -77,35 +120,23 @@ const App: React.FC = () => {
       });
     };
 
-    // if logged in user
-    if (localStorage.getItem("JWT")) {
-      const fetchUserData: Function = async () => {
-        const user: IUser = await getUserInfo();
-
-        setUser({
-          username: user.username,
-          name: user.name,
-          surname: user.surname,
-          email: user.email,
-          avatar: user.avatar,
-        });
-      };
-
-      fetchUserData();
-    }
-
     fetchQuotes();
-  }, []);
+  }, [user, setUser]);
 
   const authorized = () => {
     // if logged in user
     if (localStorage.getItem("JWT")) return redirect("/");
   };
   authorized();
-
   return (
     <>
-      <Nav collapsed={collapsed} setCollapsed={setCollapsed} user={user} />
+      <Nav
+        collapsed={collapsed}
+        setCollapsed={setCollapsed}
+        setModalOpen={setModalOpen}
+        setModalContent={setModalContent}
+        user={user}
+      />
       <div id="container">
         <BrowserRouter>
           <Routes>
@@ -147,16 +178,85 @@ const App: React.FC = () => {
                       flexWrap={{ basis: "25" }}
                     />
                   )}
+                  <Modal
+                    open={modalOpen}
+                    onClose={() => setModalOpen(false)}
+                    aria-labelledby="modal-settings"
+                    closeAfterTransition
+                    slots={{ backdrop: Backdrop }}
+                  >
+                    <Fade in={modalOpen}>
+                      <Box id="modalBox">
+                        {modalContent.type === "settings" && (
+                          <SettingsForm
+                            user={user}
+                            setUser={setUser}
+                            setModalOpen={setModalOpen}
+                          />
+                        )}
+                        {modalContent.type === "quote" && (
+                          <QuoteForm
+                            type={modalContent.data.formType as quoteForm}
+                            data={{
+                              id: modalContent.data.id,
+                              quote: modalContent.data.quote,
+                            }}
+                            username={user.username}
+                            quotes={quotes}
+                            setQuotes={setQuotes}
+                            setModalOpen={setModalOpen}
+                          />
+                        )}
+                      </Box>
+                    </Fade>
+                  </Modal>
                 </>
               }
             />
             <Route
               path="/profile"
               element={
-                <Profile
-                  quotes={quotes}
-                  setQuotes={setQuotes}
-                />
+                <>
+                  <Profile
+                    user={user}
+                    quotes={quotes}
+                    setQuotes={setQuotes}
+                    setModalOpen={setModalOpen}
+                    setModalContent={setModalContent}
+                  />
+                  <Modal
+                    open={modalOpen}
+                    onClose={() => setModalOpen(false)}
+                    aria-labelledby="modal-settings"
+                    closeAfterTransition
+                    slots={{ backdrop: Backdrop }}
+                  >
+                    <Fade in={modalOpen}>
+                      <Box id="modalBox">
+                        {modalContent.type === "settings" && (
+                          <SettingsForm
+                            user={user}
+                            setUser={setUser}
+                            setModalOpen={setModalOpen}
+                          />
+                        )}
+                        {modalContent.type === "quote" && (
+                          <QuoteForm
+                            type={modalContent.data.formType as quoteForm}
+                            data={{
+                              id: modalContent.data.id,
+                              quote: modalContent.data.quote,
+                            }}
+                            username={user.username}
+                            quotes={quotes}
+                            setQuotes={setQuotes}
+                            setModalOpen={setModalOpen}
+                          />
+                        )}
+                      </Box>
+                    </Fade>
+                  </Modal>
+                </>
               }
             />
             <Route

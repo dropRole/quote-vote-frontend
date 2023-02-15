@@ -1,33 +1,32 @@
 import { useEffect, useRef, useState } from "react";
-import { TextButton } from "./TextButton";
+import { TextButton } from "../components/TextButton";
 import "./nav.css";
 import logo from "../assets/icons/logo-orange.png";
-import { HamburgerButton } from "./HamburgerButton";
-import { AddButton } from "./AddButton";
+import { HamburgerButton } from "../components/HamburgerButton";
+import { AddButton } from "../components/AddButton";
 import chevron from "../assets/icons/chevron.png";
 import colouredChevron from "../assets/icons/chevron-coloured.png";
 import { IUser } from "../App";
-import { getUserAvatar } from "../services/users/users-get";
-import defaultAvatar from "../assets/icons/man.png";
+import { modalContent } from "../App";
 
 interface INavProps {
   collapsed: boolean;
   setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
+  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setModalContent: React.Dispatch<React.SetStateAction<modalContent>>;
   user: IUser;
 }
 
-export const Nav: React.FC<INavProps> = ({ collapsed, setCollapsed, user }) => {
-  const [avatar, setAvatar] = useState<Blob | string>(defaultAvatar);
+export const Nav: React.FC<INavProps> = ({
+  collapsed,
+  setCollapsed,
+  setModalOpen,
+  setModalContent,
+  user,
+}) => {
+  const [avatar, setAvatar] = useState<string | Blob>(user.avatar);
 
-  useEffect(() => {
-    const streamUserAvatar = async () => {
-      const stream = await getUserAvatar(user.avatar as string);
-      setAvatar(stream);
-    };
-
-    // if user avatar is defined
-    if (user.avatar !== undefined) streamUserAvatar();
-  }, [user.avatar]);
+  useEffect(() => setAvatar(user.avatar), [user.avatar]);
 
   const nav: React.RefObject<HTMLElement> = useRef<HTMLElement>(null);
 
@@ -105,15 +104,17 @@ export const Nav: React.FC<INavProps> = ({ collapsed, setCollapsed, user }) => {
       <div id="toolbar" ref={toolbar}>
         {localStorage.getItem("JWT") ? (
           <>
-            <AddButton domRef={addBtn} clickAction={Function} />
+            <AddButton
+              domRef={addBtn}
+              clickAction={() => {
+                setModalOpen(true);
+                setModalContent({ type: "quote", data: { formType: "post" } });
+              }}
+            />
             <div
               id="profileAvatar"
               onClick={() =>
-                (window.location.href = `/profile?username=${
-                  user.username
-                }&fullname=${`${user.name} ${user.surname}`}&avatar=${
-                  typeof avatar === "string" ? "default" : user.avatar
-                }`)
+                (window.location.href = `/profile?username=${user.username}`)
               }
             >
               <img
@@ -131,7 +132,15 @@ export const Nav: React.FC<INavProps> = ({ collapsed, setCollapsed, user }) => {
               <span>Home</span>
               <img src={chevron} className="right-chevron" alt=">" />
             </div>
-            <div>
+            <div
+              onClick={() => {
+                setModalOpen(true);
+                setModalContent({
+                  type: "settings",
+                  data: { formType: "basics" },
+                });
+              }}
+            >
               <span>Settings</span>
               <img src={chevron} className="right-chevron" alt=">" />
             </div>

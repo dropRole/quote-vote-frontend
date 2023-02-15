@@ -1,5 +1,5 @@
 import React from "react";
-import { IQuote } from "../App";
+import { modalContent, IQuote } from "../App";
 import { Card } from "../containers/Card";
 import { voteOnQuote } from "../services/quotes/quotes-votes-patch";
 import "./card-box.css";
@@ -22,6 +22,9 @@ interface ICardBoxProps {
   renderingQuotes: IQuote[];
   flexWrap: { basis: string };
   domRef?: React.RefObject<HTMLDivElement>;
+  authorized?: string;
+  setModalOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  setModalContent?: React.Dispatch<React.SetStateAction<modalContent>>;
   distinct?: number[];
   blured?: number[];
 }
@@ -32,6 +35,9 @@ export const CardBox: React.FC<ICardBoxProps> = ({
   quotes,
   domRef,
   flexWrap,
+  authorized,
+  setModalOpen,
+  setModalContent,
   distinct,
   blured,
 }) => {
@@ -158,6 +164,9 @@ export const CardBox: React.FC<ICardBoxProps> = ({
             distinct={distinctCard}
             blured={bluredCard}
             voteOnQuote={upDownVote}
+            authorized={authorized}
+            setModalOpen={setModalOpen}
+            setModalContent={setModalContent}
           />
         );
       })}

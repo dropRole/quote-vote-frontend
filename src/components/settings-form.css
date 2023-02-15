@@ -1,0 +1,59 @@
+form#settings > p:nth-child(1) {
+  font-weight: 400;
+  font-size: 35px;
+  line-height: 41px;
+}
+
+form#settings input[type="file"] {
+  position: absolute;
+  visibility: hidden;
+
+  width: 0;
+  height: 0;
+}
+
+form#settings > div:last-child {
+  display: flex;
+  flex-direction: row;
+}
+
+form#settings > div:last-child > button {
+  flex-grow: 1;
+}
+
+form#settings img.avatar {
+  width: 64px;
+  height: 64px;
+
+  filter: drop-shadow(0px 0px 8px rgba(0, 0, 0, 0.15));
+}
+
+div#stepBack {
+  position: absolute;
+  bottom: 50px;
+  left: 0;
+
+  width: 100%;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 0;
+
+  cursor: pointer;
+}
+
+div#stepBack > img {
+  transform: rotateZ(270deg);
+
+  width: 16px;
+  height: 8px;
+
+  object-fit: contain;
+}
+
+div#stepBack > img:nth-child(1) {
+  margin-right: -11px;
+}
+
+

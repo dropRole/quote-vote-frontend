@@ -3,7 +3,10 @@ import colouredChevron from "../assets/icons/chevron-coloured.png";
 import "./card.css";
 import defaultAvatar from "../assets/icons/man.png";
 import { useEffect, useState } from "react";
-import { getUserAvatar } from "../services/users/users-get";
+import { getAvatar } from "../services/users/users-get";
+import settings from "../assets/icons/setting.png";
+import deletion from "../assets/icons/remove.png";
+import { modalContent } from "../App";
 
 interface ICardProps {
   id: string;
@@ -16,6 +19,9 @@ interface ICardProps {
   total: number;
   vote: boolean | undefined;
   voteOnQuote: Function;
+  authorized?: string;
+  setModalOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  setModalContent?: React.Dispatch<React.SetStateAction<modalContent>>;
   blured?: boolean;
   distinct?: boolean;
 }
@@ -31,6 +37,9 @@ export const Card: React.FC<ICardProps> = ({
   total,
   vote,
   distinct,
+  authorized,
+  setModalOpen,
+  setModalContent,
   blured,
   voteOnQuote,
 }) => {
@@ -40,7 +49,7 @@ export const Card: React.FC<ICardProps> = ({
     // if user has an avatar
     if (avatar !== null) {
       const fetchUserAvatar = async () => {
-        const image = await getUserAvatar(avatar);
+        const image = await getAvatar(avatar);
 
         setUserAvatar(image);
       };
@@ -104,6 +113,35 @@ export const Card: React.FC<ICardProps> = ({
           updated ? "- " + new Date(updated).toLocaleDateString() : ""
         }`}</p>
       </div>
+      {authorized &&
+        setModalOpen &&
+        setModalContent &&
+        username === authorized && (
+          <div className="quote-settings">
+            <img
+              src={settings}
+              alt="settings"
+              onClick={() => {
+                setModalOpen(true);
+                setModalContent({
+                  type: "quote",
+                  data: { formType: "edit", id, quote },
+                });
+              }}
+            />
+            <img
+              src={deletion}
+              alt="deletion"
+              onClick={() => {
+                setModalOpen(true);
+                setModalContent({
+                  type: "quote",
+                  data: { formType: "un-post", id },
+                });
+              }}
+            />
+          </div>
+        )}
     </div>
   );
 };

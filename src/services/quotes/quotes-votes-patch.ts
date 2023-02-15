@@ -1,5 +1,5 @@
 // up or down vote on the given quote
-export const voteOnQuote = async (
+export const voteOnQuote: Function = async (
   id: string,
   vote: boolean
 ): Promise<boolean> => {
