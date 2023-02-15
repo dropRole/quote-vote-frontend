@@ -1,5 +1,5 @@
 // request a user signup
-export const signup = async (
+export const signup: Function = async (
   form: HTMLFormElement
 ): Promise<{ status: number; message: string }> => {
   const headers: Headers = new Headers();
@@ -39,7 +39,7 @@ export const signup = async (
 };
 
 // request a user login
-export const login = async (
+export const login: Function = async (
   form: HTMLFormElement
 ): Promise<{ status: number; message: string; jwt: string }> => {
   const headers: Headers = new Headers();

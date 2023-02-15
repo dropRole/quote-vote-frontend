@@ -46,7 +46,7 @@ form > div {
 div.validation-error::after,
 .signup-login-result::before {
   color: hsl(16, 64%, 64%);
-  
+
   font-style: italic;
 }
 
@@ -78,11 +78,6 @@ form > p:nth-child(1) {
   letter-spacing: 0.25px;
 }
 
-input {
-  padding: 8px 30px 8px 24px;
-  gap: 8px;
-}
-
 div#fullnameGroup {
   flex-direction: row;
   justify-content: space-between;
@@ -103,7 +98,10 @@ label {
 input {
   align-self: stretch;
 
-  border: 2px solid #de8667;
+  padding: 8px 30px 8px 24px;
+  gap: 8px;
+
+  border: 2px solid hsl(16, 64%, 64%);
   border-radius: 32px;
   outline: none;
 }

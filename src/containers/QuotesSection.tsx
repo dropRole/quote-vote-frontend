@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { IQuote } from "../App";
+import { modalContent, IQuote } from "../App";
 import { getQuotes } from "../services/quotes/quotes-get";
 import { CardBox } from "../components/CardBox";
 import { TextButton } from "../components/TextButton";
@@ -21,6 +21,9 @@ interface IQuotesSectionProps {
   >;
   search: string;
   flexWrap: { basis: string };
+  authorized?: string;
+  setModalOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  setModalContent?: React.Dispatch<React.SetStateAction<modalContent>>;
 }
 
 export const QuotesSection: React.FC<IQuotesSectionProps> = ({
@@ -28,6 +31,9 @@ export const QuotesSection: React.FC<IQuotesSectionProps> = ({
   setQuotes,
   search,
   flexWrap,
+  authorized,
+  setModalOpen,
+  setModalContent,
 }) => {
   const [limit, setLimit] = useState<number>(10);
 
@@ -139,6 +145,9 @@ export const QuotesSection: React.FC<IQuotesSectionProps> = ({
         setQuotes={setQuotes}
         renderingQuotes={quotes[quotesKey].slice(0, limit)}
         domRef={cardBox}
+        authorized={authorized}
+        setModalOpen={setModalOpen}
+        setModalContent={setModalContent}
         flexWrap={flexWrap}
       />
       {

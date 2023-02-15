@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from "react";
 import "./profile.css";
-import { getUserAvatar, getUserKarma } from "../services/users/users-get";
-import { IQuote } from "../App";
+import {
+  getAvatar,
+  getUserKarma,
+} from "../services/users/users-get";
+import { modalContent, IQuote, IUser } from "../App";
 import { getQuotes } from "../services/quotes/quotes-get";
 import { QuotesSection } from "../containers/QuotesSection";
 import defaultAvatar from "../assets/icons/man.png";
 
 interface IProfileSectionProps {
+  user: IUser;
   quotes: {
     random: IQuote[];
     recent: IQuote[];
@@ -21,13 +25,28 @@ interface IProfileSectionProps {
       voted: IQuote[];
     }>
   >;
+  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setModalContent: React.Dispatch<React.SetStateAction<modalContent>>;
 }
 
 export const Profile: React.FC<IProfileSectionProps> = ({
+  user,
   quotes,
   setQuotes,
+  setModalOpen,
+  setModalContent,
 }) => {
-  const [profileAvatar, setProfileAvatar] = useState<Blob | string>(
+  const params: URLSearchParams = new URL(window.location.toString()).searchParams;
+
+  const [profileUsername, setProfileUsername] = useState<string>(
+    params.get("username") as string
+  );
+
+  const [profileFullname, setProfileFullname] = useState<string>(
+    params.get("fullname") as string
+  );
+
+  const [profileAvatar, setProfileAvatar] = useState<string | Blob>(
     defaultAvatar
   );
 
@@ -35,31 +54,36 @@ export const Profile: React.FC<IProfileSectionProps> = ({
     { quotes: 0, karma: 0 }
   );
 
-  const username: string = new URL(
-    document.location.toString()
-  ).searchParams.get("username") as string;
-
-  const fullname: string = new URL(
-    document.location.toString()
-  ).searchParams.get("fullname") as string;
-
-  const avatarPath: string = new URL(
-    document.location.toString()
-  ).searchParams.get("avatar") as string;
-
   useEffect(() => {
+    const streamUserAvatar = async (path: string) => {
+      const stream: Blob = await getAvatar(path);
+
+      setProfileAvatar(stream);
+    };
+
+    // if logged in user profile
+    if (params.get("username") === user.username) {
+      setProfileUsername(user.username);
+      setProfileAvatar(user.avatar);
+      setProfileFullname(`${user.name} ${user.surname}`);
+    } else if (params.get("avatar") && params.get("avatar") !== "default")
+      streamUserAvatar(params.get("avatar") as string);
+
     const fetchUserKarma = async () => {
-      const karma = await getUserKarma(username);
+      const karma: { quotes: number; karma: number } = await getUserKarma(
+        params.get("username")
+      );
+
       setUserKarma(karma);
     };
 
     const fetchQuotes = async () => {
-      const recent = await getQuotes("recent", username, 10);
+      const recent = await getQuotes("recent", profileUsername, 10);
 
-      const most = await getQuotes("most", username, 10);
+      const most = await getQuotes("most", profileUsername, 10);
 
       const voted = await getQuotes("voted", "", 10);
-      
+
       setQuotes({
         random: quotes.random,
         recent: recent,
@@ -68,19 +92,10 @@ export const Profile: React.FC<IProfileSectionProps> = ({
       });
     };
 
-    const streamUserAvatar = async () => {
-      const stream = await getUserAvatar(avatarPath);
-
-      setProfileAvatar(stream);
-    };
-
-    // if avatar path is given
-    if (avatarPath !== "default") streamUserAvatar();
-
     fetchQuotes();
 
     fetchUserKarma();
-  }, [username, quotes.random, setQuotes, avatarPath, setProfileAvatar]);
+  }, [params, user, profileUsername, setQuotes, quotes.random, setUserKarma]);
   return (
     <>
       <div id="profile">
@@ -92,7 +107,7 @@ export const Profile: React.FC<IProfileSectionProps> = ({
           }
           alt="avatar"
         />
-        <p id="userFullname">{fullname}</p>
+        <p id="userFullname">{profileFullname}</p>
         <div id="karmaStats">
           <div>
             <span>Quotes</span>
@@ -110,18 +125,27 @@ export const Profile: React.FC<IProfileSectionProps> = ({
           setQuotes={setQuotes}
           search="most"
           flexWrap={{ basis: "" }}
+          authorized={user.username}
+          setModalOpen={setModalOpen}
+          setModalContent={setModalContent}
         />
         <QuotesSection
           quotes={quotes}
           setQuotes={setQuotes}
           search="recent"
           flexWrap={{ basis: "" }}
+          authorized={user.username}
+          setModalOpen={setModalOpen}
+          setModalContent={setModalContent}
         />
         <QuotesSection
           quotes={quotes}
           setQuotes={setQuotes}
           search="voted"
           flexWrap={{ basis: "" }}
+          authorized={user.username}
+          setModalOpen={setModalOpen}
+          setModalContent={setModalContent}
         />
       </div>
     </>

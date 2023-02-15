@@ -3,6 +3,10 @@ import "./signup-login-form.css";
 import defaultAvatar from "../assets/icons/man.png";
 import { TextButton } from "../components/TextButton";
 import { signup, login } from "../services/users/auth";
+import {
+  validateForm,
+  triggerValidationErrors,
+} from "../helpers/form-validation";
 
 interface ISignupLoginFormProps {
   state: string;
@@ -11,131 +15,12 @@ interface ISignupLoginFormProps {
 export const SignupLoginForm: React.FC<ISignupLoginFormProps> = ({ state }) => {
   const form: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
 
-  const triggerValidationErrors: Function = (
-    validationErrors: { field: string; message: string }[]
-  ) => {
-    validationErrors.forEach((validationError) => {
-      // if object ref is instantiated
-      if (form.current) {
-        const field = form.current.querySelector(
-          `input[name="${validationError.field}"]`
-        ) as HTMLInputElement;
-
-        // if field has parent element
-        if (field.parentElement) {
-          field.parentElement.className = "validation-error";
-          field.parentElement.dataset.error = `* ${validationError.message}`;
-        }
-      }
-    });
-  };
-
-  // validate the signup form
-  const validateSignupForm: Function = (): boolean => {
-    let validationErrors: { field: string; message: string }[] = [];
-
-    // if object ref instantiated
-    if (form.current) {
-      const fields = form.current.querySelectorAll("input");
-      fields.forEach((field) => {
-        switch (field.name) {
-          case "email":
-            field.value.length > 64 &&
-              validationErrors.push({
-                field: "email",
-                message: "Email shouldn't be longer than 64 chars",
-              });
-            break;
-
-          case "name":
-            field.value.length > 13 &&
-              validationErrors.push({
-                field: "name",
-                message: "Name shouldn't be longer than 13 chars",
-              });
-            break;
-
-          case "surname":
-            field.value.length > 20 &&
-              validationErrors.push({
-                field: "surname",
-                message: "Surname shouldn't be longer than 20 chars",
-              });
-            break;
-
-          case "username":
-            field.value.length < 4 &&
-              validationErrors.push({
-                field: "username",
-                message: "Username must be at least 4 chars long",
-              });
-
-            field.value.length > 20 &&
-              validationErrors.push({
-                field: "username",
-                message: "Username shouldn't be longer than 20 chars",
-              });
-            break;
-
-          case "pass":
-            let message: string = "";
-            field.value.length < 8 &&
-              (message = message + "Password must be at least 8 chars long");
-
-            field.value.length > 32 &&
-              (message =
-                message + "\r\n Password shouldn't be longer than 32 chars");
-
-            !/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/.test(
-              field.value
-            ) &&
-              (message =
-                message +
-                "\r\n Password must contain small and, at least one, capital and special chars");
-
-            // if there's an error
-            message.length &&
-              validationErrors.push({ field: "pass", message: message });
-
-            break;
-
-          case "passConfirm":
-            field.value !==
-              (
-                form.current?.querySelector(
-                  "input[name='pass']"
-                ) as HTMLInputElement
-              ).value &&
-              validationErrors.push({
-                field: "passConfirm",
-                message: "Passwords must match",
-              });
-        }
-      });
-    }
-
-    form.current?.querySelectorAll("input").forEach((input) => {
-      // if input has parent element
-      if (input.parentElement) {
-        input.parentElement?.classList.remove("validation-error");
-        input.parentElement.dataset.error = "";
-      }
-    });
-
-    // if no validation errors
-    if (!validationErrors.length) return true;
-
-    triggerValidationErrors(validationErrors);
-
-    return false;
-  };
-
   // perform the signup
   const signupUser: Function = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     // if form validated
-    if (validateSignupForm()) {
+    if (validateForm(form)) {
       // if ref object instantiated
       if (form.current) {
         const response: { status: number; message: string } = await signup(
@@ -144,22 +29,18 @@ export const SignupLoginForm: React.FC<ISignupLoginFormProps> = ({ state }) => {
 
         // if username already exists
         if (response.status === 409)
-          triggerValidationErrors([
+          triggerValidationErrors(form, [
             {
               field: "username",
               message: "Username already exists",
             },
           ]);
 
-        if (form.current.querySelector("div")) {
-          form.current
-            .querySelector("div")
-            ?.classList.add("signup-login-result");
+        form.current.querySelector("div")?.classList.add("signup-login-result");
 
-          // if accessable
-          (form.current.querySelector("div") as HTMLElement).dataset.result =
-            response.message;
-        }
+        // if accessable
+        (form.current.querySelector("div") as HTMLElement).dataset.result =
+          response.message;
 
         // if succeeded
         if (response.status === 201) window.location.href = "/login";
@@ -173,9 +54,8 @@ export const SignupLoginForm: React.FC<ISignupLoginFormProps> = ({ state }) => {
 
     // if ref object instantiated
     if (form.current) {
-      const response: { status: number; message: string, jwt: string } = await login(
-        form.current
-      );
+      const response: { status: number; message: string; jwt: string } =
+        await login(form.current);
 
       if (form.current.querySelector("div")) {
         form.current.querySelector("div")?.classList.add("signup-login-result");
@@ -187,7 +67,7 @@ export const SignupLoginForm: React.FC<ISignupLoginFormProps> = ({ state }) => {
 
       // if user logged in
       if (response.status === 201) {
-        localStorage.setItem('JWT', response.jwt)
+        localStorage.setItem("JWT", response.jwt);
 
         window.location.href = "/";
       }
@@ -281,7 +161,11 @@ export const SignupLoginForm: React.FC<ISignupLoginFormProps> = ({ state }) => {
         </span>
         <span
           className="color-primary"
-          onClick={() => state === "signup" ? window.location.href = "/login" : window.location.href = '/signup'}
+          onClick={() =>
+            state === "signup"
+              ? (window.location.href = "/login")
+              : (window.location.href = "/signup")
+          }
         >
           {state === "signup" ? "Login" : "Signup"}
         </span>

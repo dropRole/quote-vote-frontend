@@ -1,7 +1,7 @@
 import { IQuote } from "../../App";
 
 // get random quote
-export const getRandomQuote = async (): Promise<IQuote> => {
+export const getRandomQuote: Function = async (): Promise<IQuote> => {
   const headers: Headers = new Headers();
   headers.append("Authorization", `Bearer ${localStorage.getItem("JWT")}`);
 
@@ -27,7 +27,7 @@ export const getRandomQuote = async (): Promise<IQuote> => {
 };
 
 // get quotes regarding the given criterions
-export const getQuotes = async (
+export const getQuotes: Function = async (
   search: string,
   author: string,
   limit: number
