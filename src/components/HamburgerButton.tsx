@@ -1,18 +1,17 @@
 import "./button.css";
 
 interface IHamburgerButtonProps {
-  domRef: React.RefObject<HTMLButtonElement>;
+  className: string;
   clickAction: Function;
 }
 
 export const HamburgerButton: React.FC<IHamburgerButtonProps> = ({
-  domRef,
+  className,
   clickAction,
 }) => {
   return (
     <button
-      ref={domRef}
-      className="btn-hamburger"
+      className={className}
       onClick={() => clickAction()}
     >
       <span></span>

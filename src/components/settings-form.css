@@ -4,6 +4,12 @@ form#settings > p:nth-child(1) {
   line-height: 41px;
 }
 
+p#authResult {
+  color: hsl(16, 64%, 64%);
+
+  font-style: italic;
+}
+
 form#settings input[type="file"] {
   position: absolute;
   visibility: hidden;

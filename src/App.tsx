@@ -56,6 +56,8 @@ const App: React.FC = () => {
     voted: [],
   });
 
+  const [anyQuotes, setAnyQuotes] = useState<boolean>(true);
+
   const [user, setUser] = useState<IUser>({ avatar: defaultAvatar } as IUser);
 
   const [collapsed, setCollapsed] = useState<boolean>(false);
@@ -110,6 +112,9 @@ const App: React.FC = () => {
 
       recent = await getQuotes("recent", "", 10);
 
+      // check for posted quotes
+      setAnyQuotes(recent.length === 0 ? false : true);
+
       most = await getQuotes("most", "", 10);
 
       setQuotes({
@@ -148,6 +153,7 @@ const App: React.FC = () => {
                     <QuotesSection
                       quotes={quotes}
                       setQuotes={setQuotes}
+                      anyQuotes={anyQuotes}
                       search="random"
                       flexWrap={{ basis: "25" }}
                     />
@@ -167,6 +173,7 @@ const App: React.FC = () => {
                   <QuotesSection
                     quotes={quotes}
                     setQuotes={setQuotes}
+                    anyQuotes={anyQuotes}
                     search="most"
                     flexWrap={{ basis: "25" }}
                   />
@@ -174,6 +181,7 @@ const App: React.FC = () => {
                     <QuotesSection
                       quotes={quotes}
                       setQuotes={setQuotes}
+                      anyQuotes={anyQuotes}
                       search="recent"
                       flexWrap={{ basis: "25" }}
                     />

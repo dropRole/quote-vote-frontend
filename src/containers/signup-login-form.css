@@ -44,7 +44,7 @@ form > div {
 }
 
 div.validation-error::after,
-.signup-login-result::before {
+p#authResult {
   color: hsl(16, 64%, 64%);
 
   font-style: italic;
@@ -56,14 +56,6 @@ div.validation-error::after {
   font-size: 12px;
 
   margin-top: 5px;
-}
-
-.signup-login-result::before {
-  content: attr(data-result);
-
-  margin: auto;
-
-  font-size: 14px;
 }
 
 form > p:nth-child(1) {

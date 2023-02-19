@@ -1,38 +1,62 @@
 @media screen and (min-width: 376px) and (max-width: 992px) {
+  nav,
+  div#inscription > p,
+  div#menu > div {
+    -webkit-transition: 0.25s ease-in-out;
+    -moz-transition: 0.25s ease-in-out;
+    -o-transition: 0.25s ease-in-out;
+    transition: 0.25s ease-in-out;
+  }
+
   nav {
     justify-content: space-between;
+    align-items: center;
 
     padding: 40px;
+  }
+
+  nav.uncollapse {
+    height: 60px;
+  }
+
+  nav.collapse {
+    height: 300px;
+  }
+
+  nav.flex-column {
+    flex-direction: column;
+  }
+  
+  nav.flex-row {
+    flex-direction: row;
   }
 
   div#inscription > p > img {
     position: absolute;
 
-    top: 0px;
+    top: 0;
     right: -20px;
-
-    background-color: transparent;
   }
 
-  div#inscription {
-    justify-content: space-between;
-    flex-basis: 63%;
-  }
-
-  div#toolbar {
+  div#menu {
     flex-direction: column;
-    justify-content: center;
-    justify-self: flex-end;
   }
 
-  div#toolbar > div {
-    display: none;
-    opacity: 0;
+  div#menu.w-100 {
+    width: 100%;
+  }
+  
+  div#menu.auto {
+    width: auto;
+  }
+
+  div#menu > div{
+    display: flex;
 
     width: 100%;
   }
 
-  div#toolbar > div#profileAvatar {
+  div#profileAvatar {
     justify-content: start !important;
     gap: 0px 20px;
   }
@@ -40,34 +64,36 @@
 
 @media screen and (min-width: 992px) {
   nav {
-    justify-content: space-around !important;
+    justify-content: space-around;
   }
 
   div#inscription {
     flex-basis: 50%;
   }
 
-  div#toolbar {
+  div#menu {
     flex-direction: row;
   }
 
-  div#toolbar > div {
-    display: flex;
+  div#menu > div {
+    display: flex!important;
+
+    opacity: 1!important;
   }
 
-  div#toolbar > div#profileAvatar {
+  div#profileAvatar {
     gap: 0px 10px;
   }
 
-  div#toolbar > div > img:not(.avatar) {
+  div#menu > div > img:not(.avatar) {
     display: none;
   }
 
-  div#toolbar > div:nth-child(2) {
+  div#menu > div:nth-child(2) {
     order: 4;
   }
 
-  div#toolbar > button {
+  div#menu > button {
     order: 5;
   }
 }
@@ -76,8 +102,6 @@ nav {
   display: flex;
 
   top: 0;
-
-  height: min-content;
 
   box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.15);
 
@@ -95,22 +119,13 @@ div#inscription > p {
   cursor: pointer;
 }
 
-nav,
-div#inscription > p,
-nav > div#toolbar > div {
-  -webkit-transition: 0.25s ease-in-out;
-  -moz-transition: 0.25s ease-in-out;
-  -o-transition: 0.25s ease-in-out;
-  transition: 0.25s ease-in-out;
-}
-
-div#toolbar {
+div#menu {
   display: flex;
   align-items: center;
   gap: 30px;
 }
 
-div#toolbar > div {
+div#menu > div {
   justify-content: space-between;
   align-items: center;
 

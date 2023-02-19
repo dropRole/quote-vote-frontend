@@ -48,10 +48,6 @@
     width: 80%;
   }
 
-  .flex-basis-10 {
-    flex-basis: 10% !important;
-  }
-
   .flex-basis-100 {
     flex-basis: 100% !important;
   }
@@ -83,9 +79,14 @@
     flex-basis: 45%;
     flex-grow: 0;
   }
+  
+  section#introSection > div:nth-child(2) {
+    flex-basis: 30%;
+    flex-grow: 0;
+  }
 
-  section#introSection div.card {
-    width: 60%;
+  section#introSection > div:nth-child(2) > div.card {
+    width: 100%;
   }
 
   section.quotes {
@@ -135,6 +136,11 @@ div#container {
 
 section {
   display: flex;
+}
+
+section.quotes > p.nought-quotes {
+  font-size: 12px;
+  font-style: italic;
 }
 
 .h1 {
@@ -200,6 +206,10 @@ p#notFound {
   display: flex !important;
 }
 
+.d-block {
+  display: block !important;
+}
+
 .flex-column {
   flex-direction: column;
 }
@@ -212,8 +222,20 @@ p#notFound {
   justify-content: center !important;
 }
 
+.align-self-start{
+  align-self: start!important;
+}
+
+.align-self-center{
+  align-self: center!important;
+}
+
 .opacity-1 {
   opacity: 1 !important;
+}
+
+.opacity-0 {
+  opacity: 0 !important;
 }
 
 .text-center {

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { modalContent, IQuote } from "../App";
 import { getQuotes } from "../services/quotes/quotes-get";
 import { CardBox } from "../components/CardBox";
@@ -19,6 +19,7 @@ interface IQuotesSectionProps {
       voted: IQuote[];
     }>
   >;
+  anyQuotes: boolean;
   search: string;
   flexWrap: { basis: string };
   authorized?: string;
@@ -29,6 +30,7 @@ interface IQuotesSectionProps {
 export const QuotesSection: React.FC<IQuotesSectionProps> = ({
   quotes,
   setQuotes,
+  anyQuotes,
   search,
   flexWrap,
   authorized,
@@ -37,10 +39,7 @@ export const QuotesSection: React.FC<IQuotesSectionProps> = ({
 }) => {
   const [limit, setLimit] = useState<number>(10);
 
-  const cardBox: React.RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
-
-  const loadMoreButton: React.RefObject<HTMLButtonElement> =
-    useRef<HTMLButtonElement>(null);
+  const [loadMore, setLoadMore] = useState<boolean>(true);
 
   const quotesKey = search as keyof typeof quotes;
 
@@ -81,56 +80,47 @@ export const QuotesSection: React.FC<IQuotesSectionProps> = ({
     search: string = "",
     author: string = ""
   ) => {
-    // if ref object instantiated
-    if (cardBox.current) {
-      setLimit(cardBox.current.querySelectorAll("div.card").length + 10);
+    setLimit(quotes[quotesKey].length + 10);
 
-      const loaded: IQuote[] = await getQuotes(
-        search,
-        author,
-        cardBox.current.querySelectorAll("div.card").length + 10
-      );
+    const loaded: IQuote[] = await getQuotes(
+      search,
+      author,
+      quotes[quotesKey].length + 10
+    );
 
-      switch (search) {
-        case "recent":
-          setQuotes({
-            random: quotes.random,
-            recent: loaded,
-            most: quotes.most,
-            voted: quotes.voted,
-          });
-          break;
+    switch (search) {
+      case "recent":
+        setQuotes({
+          random: quotes.random,
+          recent: loaded,
+          most: quotes.most,
+          voted: quotes.voted,
+        });
+        break;
 
-        case "most":
-          setQuotes({
-            random: quotes.random,
-            recent: quotes.recent,
-            most: loaded,
-            voted: quotes.voted,
-          });
-          break;
+      case "most":
+        setQuotes({
+          random: quotes.random,
+          recent: quotes.recent,
+          most: loaded,
+          voted: quotes.voted,
+        });
+        break;
 
-        case "voted":
-          setQuotes({
-            random: quotes.random,
-            recent: quotes.recent,
-            most: quotes.most,
-            voted: loaded,
-          });
-          break;
-      }
-
-      // if loaded amount is lesser than the limit
-      if (loaded.length <= limit) {
-        // if ref object instantiated
-        if (loadMoreButton.current)
-          loadMoreButton.current.classList.add("d-none");
-
-        return;
-      }
-
-      return;
+      case "voted":
+        setQuotes({
+          random: quotes.random,
+          recent: quotes.recent,
+          most: quotes.most,
+          voted: loaded,
+        });
+        break;
     }
+
+    // if loaded amount is lesser than the limit
+    if (loaded.length <= limit) setLoadMore(false);
+
+    return;
   };
   return (
     <section className="quotes">
@@ -140,44 +130,54 @@ export const QuotesSection: React.FC<IQuotesSectionProps> = ({
       {window.location.pathname !== "/profile" && (
         <p className="text-center">{explication}</p>
       )}
-      <CardBox
-        quotes={quotes}
-        setQuotes={setQuotes}
-        renderingQuotes={quotes[quotesKey].slice(0, limit)}
-        domRef={cardBox}
-        authorized={authorized}
-        setModalOpen={setModalOpen}
-        setModalContent={setModalContent}
-        flexWrap={flexWrap}
-      />
-      {
-        <p
-          className={quotes[quotesKey].length === 10 ? "text-center" : "d-none"}
-        >
-          <TextButton
-            btn="btn-outline"
-            text={
-              localStorage.getItem("JWT") ? "Load more" : "Sign up to see more"
-            }
-            clickAction={
-              localStorage.getItem("JWT")
-                ? () => {
-                    loadQuotes(
-                      search,
-                      window.location.pathname === "/profile" &&
-                        search !== "voted"
-                        ? new URL(window.location.toString()).searchParams.get(
-                            "username"
-                          )
-                        : ""
-                    );
-                  }
-                : () => (window.location.href = "/signup")
-            }
-            domRef={loadMoreButton}
+      {anyQuotes ? (
+        <>
+          <CardBox
+            quotes={quotes}
+            setQuotes={setQuotes}
+            renderingQuotes={quotes[quotesKey].slice(0, limit)}
+            authorized={authorized}
+            setModalOpen={setModalOpen}
+            setModalContent={setModalContent}
+            flexWrap={flexWrap}
           />
-        </p>
-      }
+          {
+            <p
+              className={
+                quotes[quotesKey].length === 10 ? "text-center" : "d-none"
+              }
+            >
+              {loadMore && (
+                <TextButton
+                  btn="btn-outline"
+                  text={
+                    localStorage.getItem("JWT")
+                      ? "Load more"
+                      : "Sign up to see more"
+                  }
+                  clickAction={
+                    localStorage.getItem("JWT")
+                      ? () => {
+                          loadQuotes(
+                            search,
+                            window.location.pathname === "/profile" &&
+                              search !== "voted"
+                              ? new URL(
+                                  window.location.toString()
+                                ).searchParams.get("username")
+                              : ""
+                          );
+                        }
+                      : () => (window.location.href = "/signup")
+                  }
+                />
+              )}
+            </p>
+          }
+        </>
+      ) : (
+        <p className="nought-quotes">Nought quotes</p>
+      )}
     </section>
   );
 };

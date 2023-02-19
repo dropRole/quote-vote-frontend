@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { TextButton } from "../components/TextButton";
 import "./nav.css";
 import logo from "../assets/icons/logo-orange.png";
@@ -24,88 +24,108 @@ export const Nav: React.FC<INavProps> = ({
   setModalContent,
   user,
 }) => {
+  const [navHeight, setNavheight] = useState<string>("uncollapse");
+
+  const [navFlexDirection, setNavFlexDirection] = useState<string>("row");
+
+  const [hamBtnAlign, setHamBtnAlign] = useState<string>("align-self-center");
+
+  const [inscriptionDisplay, setInscriptionDisplay] =
+    useState<string>("d-block");
+
+  const [inscriptionOpacity, setInscriptionOpacity] =
+    useState<string>("opacity-1");
+
+  const [addBtnDisplay, setAddBtnDisplay] = useState<string>("d-block");
+
+  const [addBtnOpacity, setAddBtnOpacity] = useState<string>("opacity-1");
+
+  const [menuWidth, setMenuWidth] = useState<string>("auto");
+
+  const [menuItemDisplay, setMenuItemDisplay] = useState<string>("d-none");
+
+  const [menuItemOpacity, setMenuItemOpacity] = useState<string>("opacity-0");
+
   const [avatar, setAvatar] = useState<string | Blob>(user.avatar);
 
   useEffect(() => setAvatar(user.avatar), [user.avatar]);
 
-  const nav: React.RefObject<HTMLElement> = useRef<HTMLElement>(null);
-
-  const toolbar: React.RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
-
-  const hamBtn: React.RefObject<HTMLButtonElement> =
-    useRef<HTMLButtonElement>(null);
-
-  const addBtn: React.RefObject<HTMLButtonElement> =
-    useRef<HTMLButtonElement>(null);
-
-  const pInscription: React.RefObject<HTMLParagraphElement> =
-    useRef<HTMLParagraphElement>(null);
-
   // controls navbar collapsing setup
   const collapseNavbar: Function = () => {
-    setTimeout(() => {
-      // if nav ref instantiated
-      if (nav.current) {
-        nav.current.style.flexDirection = !collapsed ? "column" : "row";
-        nav.current
-          .querySelector("div#inscription")
-          ?.classList.toggle("flex-basis-10");
-        nav.current
-          .querySelector("div#inscription")
-          ?.classList.toggle("flex-basis-100");
-      }
-
-      // if toolbar ref instantiated
-      if (toolbar.current)
-        toolbar.current.querySelectorAll("div").forEach((el) => {
-          el.classList.toggle("d-flex");
-        });
-    }, 350);
-
-    // if hamBtn ref instantiated
-    if (hamBtn.current)
-      !collapsed
-        ? hamBtn.current.classList.add("btn-hamburger-open")
-        : hamBtn.current.classList.remove("btn-hamburger-open");
-
-    // if pInscription ref instantiated
-    if (pInscription.current)
-      !collapsed
-        ? (pInscription.current.style.opacity = "0")
-        : (pInscription.current.style.opacity = "1");
-
-    // if addBtn ref instantiated
-    if (addBtn.current)
-      !collapsed
-        ? (addBtn.current.style.opacity = "0")
-        : (addBtn.current.style.opacity = "1");
-
-    // if toolbar ref instantiated
-    if (toolbar.current)
-      toolbar.current.querySelectorAll("div").forEach((el) => {
-        el.classList.toggle("opacity-1");
-      });
-
     setCollapsed(!collapsed);
 
-    return;
+    // if nav collapsed
+    if (!collapsed) {
+      setInscriptionOpacity("opacity-0");
+
+      setAddBtnOpacity("opacity-0");
+
+      setTimeout(() => {
+        setNavheight("collapse");
+
+        setHamBtnAlign("align-self-start");
+
+        setNavFlexDirection("flex-column");
+
+        setInscriptionDisplay("d-none");
+
+        setAddBtnDisplay("d-none");
+
+        setMenuWidth("w-100");
+
+        setMenuItemDisplay("d-flex");
+      }, 250);
+
+      setTimeout(() => {
+        setMenuItemOpacity("opacity-1");
+      }, 500);
+    } else {
+      setMenuItemOpacity("opacity-0");
+      
+      setTimeout(() => {
+        setNavheight("uncollapse");
+
+        setMenuItemDisplay("d-none");
+
+        setInscriptionDisplay("d-block");
+        
+        setAddBtnDisplay("d-block");
+      }, 250)
+
+      setTimeout(() => {
+        setNavFlexDirection("flex-row");
+
+        setHamBtnAlign("align-self-center");
+
+        setMenuWidth("auto");
+
+        setInscriptionOpacity("opacity-1");
+
+        setAddBtnOpacity("opacity-1");
+      }, 500);
+    }
   };
   return (
-    <nav ref={nav}>
-      <div
-        id="inscription"
-        className={!localStorage.getItem("JWT") ? "flex-basis-100" : ""}
-      >
-        <HamburgerButton domRef={hamBtn} clickAction={collapseNavbar} />
-        <p ref={pInscription} onClick={() => (window.location.href = "/")}>
+    <nav className={`${navFlexDirection} ${navHeight}`}>
+      <HamburgerButton
+        className={`btn-hamburger ${
+          collapsed ? "btn-hamburger-open" : ""
+        } ${hamBtnAlign}`}
+        clickAction={collapseNavbar}
+      />
+      <div id="inscription">
+        <p
+          className={`${inscriptionDisplay} ${inscriptionOpacity}`}
+          onClick={() => (window.location.href = "/")}
+        >
           Quote vote <img src={logo} alt="logo"></img>
         </p>
       </div>
-      <div id="toolbar" ref={toolbar}>
+      <div id="menu" className={menuWidth}>
         {localStorage.getItem("JWT") ? (
           <>
             <AddButton
-              domRef={addBtn}
+              className={`btn-add ${addBtnDisplay} ${addBtnOpacity}`}
               clickAction={() => {
                 setModalOpen(true);
                 setModalContent({ type: "quote", data: { formType: "post" } });
@@ -113,6 +133,7 @@ export const Nav: React.FC<INavProps> = ({
             />
             <div
               id="profileAvatar"
+              className={`${menuItemDisplay} ${menuItemOpacity}`}
               onClick={() =>
                 (window.location.href = `/profile?username=${user.username}`)
               }
@@ -128,11 +149,15 @@ export const Nav: React.FC<INavProps> = ({
               />
               {user.username}
             </div>
-            <div onClick={() => (window.location.href = "/")}>
+            <div
+              className={`${menuItemDisplay} ${menuItemOpacity}`}
+              onClick={() => (window.location.href = "/")}
+            >
               <span>Home</span>
               <img src={chevron} className="right-chevron" alt=">" />
             </div>
             <div
+              className={`${menuItemDisplay} ${menuItemOpacity}`}
               onClick={() => {
                 setModalOpen(true);
                 setModalContent({
@@ -145,6 +170,7 @@ export const Nav: React.FC<INavProps> = ({
               <img src={chevron} className="right-chevron" alt=">" />
             </div>
             <div
+              className={`${menuItemDisplay} ${menuItemOpacity}`}
               onClick={() => {
                 localStorage.removeItem("JWT");
 

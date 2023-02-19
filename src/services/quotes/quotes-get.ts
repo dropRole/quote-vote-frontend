@@ -20,10 +20,10 @@ export const getRandomQuote: Function = async (): Promise<IQuote> => {
     return {} as IQuote;
   }
 
-  // if unauthorized
-  if (response.status === 401) return {} as IQuote;
+  // if succeeded
+  if (response.status === 200) return await response.json();
 
-  return response.json();
+  return {} as IQuote;
 };
 
 // get quotes regarding the given criterions
@@ -43,20 +43,19 @@ export const getQuotes: Function = async (
       `Bearer ${localStorage.getItem("JWT")}`
     );
 
-  let quotes: IQuote[], response: Response;
+  let response: Response;
   try {
     response = await fetch(
       `http://localhost:3000/quotes?search=${search}&author=${author}&limit=${limit}`,
       requestOptions
     );
 
-    quotes = await response.json();
   } catch (error) {
     return [];
   }
 
-  // if unauthorized
-  if (response.status === 401) return [];
+  // if succeeded
+  if (response.status === 200) return response.json();
 
-  return quotes;
+  return [];
 };

@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./profile.css";
-import {
-  getAvatar,
-  getUserKarma,
-} from "../services/users/users-get";
+import { getAvatar, getUserKarma } from "../services/users/users-get";
 import { modalContent, IQuote, IUser } from "../App";
 import { getQuotes } from "../services/quotes/quotes-get";
 import { QuotesSection } from "../containers/QuotesSection";
@@ -36,7 +33,12 @@ export const Profile: React.FC<IProfileSectionProps> = ({
   setModalOpen,
   setModalContent,
 }) => {
-  const params: URLSearchParams = new URL(window.location.toString()).searchParams;
+  const [anyQuotes, setAnyQuotes] = useState<boolean>(true);
+
+  const [anyVotedQuotes, setAnyVotedQuotes] = useState<boolean>(true);
+
+  const params: URLSearchParams = new URL(window.location.toString())
+    .searchParams;
 
   const [profileUsername, setProfileUsername] = useState<string>(
     params.get("username") as string
@@ -80,9 +82,14 @@ export const Profile: React.FC<IProfileSectionProps> = ({
     const fetchQuotes = async () => {
       const recent = await getQuotes("recent", profileUsername, 10);
 
+      // check for posted quotes
+      setAnyQuotes(recent.length === 0 ? false : true);
+
       const most = await getQuotes("most", profileUsername, 10);
 
       const voted = await getQuotes("voted", "", 10);
+
+      setAnyVotedQuotes(voted.length === 0 ? false : true);
 
       setQuotes({
         random: quotes.random,
@@ -123,6 +130,7 @@ export const Profile: React.FC<IProfileSectionProps> = ({
         <QuotesSection
           quotes={quotes}
           setQuotes={setQuotes}
+          anyQuotes={anyQuotes}
           search="most"
           flexWrap={{ basis: "" }}
           authorized={user.username}
@@ -132,6 +140,7 @@ export const Profile: React.FC<IProfileSectionProps> = ({
         <QuotesSection
           quotes={quotes}
           setQuotes={setQuotes}
+          anyQuotes={anyQuotes}
           search="recent"
           flexWrap={{ basis: "" }}
           authorized={user.username}
@@ -141,6 +150,7 @@ export const Profile: React.FC<IProfileSectionProps> = ({
         <QuotesSection
           quotes={quotes}
           setQuotes={setQuotes}
+          anyQuotes={anyVotedQuotes}
           search="voted"
           flexWrap={{ basis: "" }}
           authorized={user.username}

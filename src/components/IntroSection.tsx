@@ -43,14 +43,18 @@ export const IntroSection: React.FC<IIntroSectionProps> = ({
           clickAction={() => (window.location.href = "/signup")}
         />
       </div>
-      <CardBox
-        quotes={quotes}
-        setQuotes={setQuotes}
-        renderingQuotes={quotes.recent.length ? quotes.recent.slice(0, 3) : []}
-        flexWrap={{ basis: '' }}
-        distinct={[1]}
-        blured={[0, 2]}
-      />
+      {quotes.recent.slice(0, 3).length === 3 && (
+        <CardBox
+          quotes={quotes}
+          setQuotes={setQuotes}
+          renderingQuotes={
+            quotes.recent.length ? quotes.recent.slice(0, 3) : []
+          }
+          flexWrap={{ basis: "" }}
+          distinct={[1]}
+          blured={[0, 2]}
+        />
+      )}
     </section>
   );
 };

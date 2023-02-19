@@ -1,18 +1,17 @@
 import "./button.css";
 
 interface IAddButtonProps {
-  domRef: React.RefObject<HTMLButtonElement>;
+  className: string
   clickAction: Function;
 }
 
 export const AddButton: React.FC<IAddButtonProps> = ({
-  domRef,
+  className,
   clickAction,
 }) => {
   return (
     <button
-      ref={domRef}
-      className="btn-add"
+      className={className}
       onClick={() => clickAction()}
     >
       <span></span>

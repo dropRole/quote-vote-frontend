@@ -1,7 +1,7 @@
 // request a user signup
 export const signup: Function = async (
   form: HTMLFormElement
-): Promise<{ status: number; message: string }> => {
+): Promise<{ [key: string]: boolean | string } | undefined> => {
   const headers: Headers = new Headers();
   headers.append("Content-Type", "application/x-www-form-urlencoded");
 
@@ -28,20 +28,21 @@ export const signup: Function = async (
   try {
     response = await fetch("http://localhost:3000/auth/signup", requestOptions);
   } catch (error: any) {
-    return { status: 500, message: error };
+    return { result: false, message: error };
   }
 
   // if username already exists
   if (response.status === 409)
-    return { status: 409, message: "Username already exists" };
+    return { result: false, message: "Username already exists" };
 
-  return { status: response.status, message: "Signed up" };
+  // if signed up
+  if (response.status === 201) return { result: true, message: "Signed up" };
 };
 
 // request a user login
 export const login: Function = async (
   form: HTMLFormElement
-): Promise<{ status: number; message: string; jwt: string }> => {
+): Promise<{ [key: string]: boolean | string } | undefined> => {
   const headers: Headers = new Headers();
   headers.append("Content-Type", "application/x-www-form-urlencoded");
 
@@ -68,18 +69,21 @@ export const login: Function = async (
   try {
     response = await fetch("http://localhost:3000/auth/login", requestOptions);
   } catch (error: any) {
-    return { status: 500, message: error.message, jwt: "" };
+    return { result: false, message: error.message };
   }
 
   // if not found
   if (response.status === 400 || response.status === 401)
-    return { status: 404, message: "Check your credentials", jwt: "" };
+    return { result: false, message: "Check your credentials" };
 
-  const { accessToken } = await response.json();
-  
-  return {
-    status: response.status,
-    message: "Logged in",
-    jwt: accessToken,
-  };
+  // if logged in
+  if (response.status === 201) {
+    const { accessToken } = await response.json();
+
+    return {
+      result: true,
+      message: "Loged in",
+      jwt: accessToken,
+    };
+  }
 };

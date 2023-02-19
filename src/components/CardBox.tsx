@@ -21,7 +21,6 @@ interface ICardBoxProps {
   >;
   renderingQuotes: IQuote[];
   flexWrap: { basis: string };
-  domRef?: React.RefObject<HTMLDivElement>;
   authorized?: string;
   setModalOpen?: React.Dispatch<React.SetStateAction<boolean>>;
   setModalContent?: React.Dispatch<React.SetStateAction<modalContent>>;
@@ -33,7 +32,6 @@ export const CardBox: React.FC<ICardBoxProps> = ({
   setQuotes,
   renderingQuotes,
   quotes,
-  domRef,
   flexWrap,
   authorized,
   setModalOpen,
@@ -135,7 +133,6 @@ export const CardBox: React.FC<ICardBoxProps> = ({
 
   return (
     <div
-      ref={domRef}
       className={`card-box${renderingQuotes.length === 1 ? " box-one" : ""}${flexWrap.basis ? ` flex-basis-${flexWrap.basis}` : ""}`}
     >
       {renderingQuotes.map((q, index) => {

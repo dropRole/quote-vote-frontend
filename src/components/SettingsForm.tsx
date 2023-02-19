@@ -4,10 +4,7 @@ import "./settings-form.css";
 import { IUser } from "../App";
 import defaultAvatar from "../assets/icons/man.png";
 import chevron from "../assets/icons/chevron.png";
-import {
-  validateForm,
-  triggerValidationErrors,
-} from "../helpers/form-validation";
+import { validateForm } from "../helpers/form-validation";
 import {
   updatePassword,
   updateAvatar,
@@ -17,6 +14,11 @@ import { deleteAvatar } from "../services/users/users-delete";
 import { getAvatar } from "../services/users/users-get";
 
 type settingsForm = "basics" | "pass" | "avatar";
+
+type ValidationResult = {
+  valid: boolean;
+  validationErrors: { [key: string]: { message: string } };
+};
 
 interface ISettingsFormProps {
   user: IUser;
@@ -31,6 +33,12 @@ export const SettingsForm: React.FC<ISettingsFormProps> = ({
 }) => {
   const [formType, setFormType] = useState<settingsForm>("basics");
 
+  const [submissionResult, setSubmissionResult] = useState<string>("");
+
+  const [validationErrors, setValidationErrors] = useState<{
+    [key: string]: { message: string };
+  }>({});
+
   const [avatar, setAvatar] = useState<Blob | string>(user.avatar);
 
   const form: React.RefObject<HTMLFormElement> = useRef<HTMLFormElement>(null);
@@ -39,19 +47,10 @@ export const SettingsForm: React.FC<ISettingsFormProps> = ({
     useRef<HTMLInputElement>(null);
 
   // update basic info of the user
-  const updateUserBasics: Function = async (response: {
-    [key: string]: boolean | string;
-  }): Promise<void> => {
-    response = await updateBasics(form.current as HTMLFormElement);
+  const updateUserBasics: Function = async (): Promise<void> => {
+    const response = await updateBasics(form.current as HTMLFormElement);
 
-    // if username already exists
-    if (!response.result)
-      triggerValidationErrors(form, [
-        {
-          field: "username",
-          message: "Username already exists",
-        },
-      ]);
+    setSubmissionResult(response.message as string);
 
     // if basics updated
     if (response.result) {
@@ -67,33 +66,18 @@ export const SettingsForm: React.FC<ISettingsFormProps> = ({
 
       response.jwt && localStorage.setItem("JWT", response.jwt as string);
     }
-
-    exposeSubmissionResult(response.message as string);
   };
 
   // update user password
-  const updateUserPassword = async (response: {
-    [key: string]: boolean | string;
-  }) => {
-    response = await updatePassword(form.current as HTMLFormElement);
+  const updateUserPassword = async () => {
+    const response = await updatePassword(form.current as HTMLFormElement);
 
-    // if incorrect password
-    if (!response.result)
-      triggerValidationErrors(form, [
-        {
-          field: "passCurrent",
-          message: "Incorrect password",
-        },
-      ]);
-
-    exposeSubmissionResult(response.message as string);
+    setSubmissionResult(response.message as string);
   };
 
   // update user avatar
-  const updateUserAvatar = async (response: {
-    [key: string]: boolean | string;
-  }) => {
-    response = await updateAvatar(form.current as HTMLFormElement);
+  const updateUserAvatar = async () => {
+    const response = await updateAvatar(form.current as HTMLFormElement);
 
     // if uploaded
     if (response.result) {
@@ -106,20 +90,11 @@ export const SettingsForm: React.FC<ISettingsFormProps> = ({
       setUser(user);
 
       setAvatar(stream);
+
+      setSubmissionResult(response.message as string);
     }
 
-    exposeSubmissionResult(response.message as string);
-  };
-
-  const exposeSubmissionResult = (message: string) => {
-    // if ref object instantiated
-    if (form.current) {
-      form.current.querySelector("div")?.classList.add("signup-login-result");
-
-      // if accessable
-      (form.current.querySelector("div") as HTMLElement).dataset.result =
-        message as string;
-    }
+    fileRef.current && (fileRef.current.files = null);
   };
   return (
     <form
@@ -128,22 +103,27 @@ export const SettingsForm: React.FC<ISettingsFormProps> = ({
       onSubmit={async (e) => {
         e.preventDefault();
 
-        // if form validated
-        if (validateForm(form)) {
-          // if ref object instantiated
-          if (form.current) {
-            let response: { [key: string]: boolean | string } = {};
+        setValidationErrors({});
 
-            // if basics update
-            if (formType === "basics") updateUserBasics(response);
+        const result: ValidationResult = validateForm(form.current);
 
-            // if pass update
-            if (formType === "pass") updateUserPassword(response);
+        // if form valid
+        if (result.valid) {
+          // if basics update
+          if (formType === "basics") updateUserBasics();
 
-            // if avatar upload
-            if (formType === "avatar") updateUserAvatar(response);
-          }
+          // if pass update
+          if (formType === "pass") updateUserPassword();
+
+          // if avatar upload
+          if (formType === "avatar") updateUserAvatar();
+
+          return;
         }
+
+        setSubmissionResult("Invalid form");
+
+        setValidationErrors(result.validationErrors);
       }}
     >
       <p>
@@ -154,9 +134,15 @@ export const SettingsForm: React.FC<ISettingsFormProps> = ({
         {formType === "pass" && "Change your password"}
         {formType === "avatar" && "Change your profile avatar"}
       </p>
+      {submissionResult && <p id="authResult">{submissionResult}</p>}
       {formType === "basics" && (
         <>
-          <div>
+          <div
+            className="validation-error"
+            data-error={
+              validationErrors.email ? validationErrors.email.message : ""
+            }
+          >
             <label htmlFor="email">Email</label>
             <input
               id="email"
@@ -168,7 +154,12 @@ export const SettingsForm: React.FC<ISettingsFormProps> = ({
             />
           </div>
           <div id="fullnameGroup">
-            <div>
+            <div
+              className="validation-error"
+              data-error={
+                validationErrors.name ? validationErrors.name.message : ""
+              }
+            >
               <label htmlFor="name">Name</label>
               <input
                 id="name"
@@ -178,7 +169,12 @@ export const SettingsForm: React.FC<ISettingsFormProps> = ({
                 required
               />
             </div>
-            <div>
+            <div
+              className="validation-error"
+              data-error={
+                validationErrors.surname ? validationErrors.surname.message : ""
+              }
+            >
               <label htmlFor="surname">Surname</label>
               <input
                 id="surname"
@@ -189,7 +185,12 @@ export const SettingsForm: React.FC<ISettingsFormProps> = ({
               />
             </div>
           </div>
-          <div>
+          <div
+            className="validation-error"
+            data-error={
+              validationErrors.username ? validationErrors.username.message : ""
+            }
+          >
             <label htmlFor="username">Username</label>
             <input
               id="username"
@@ -202,18 +203,31 @@ export const SettingsForm: React.FC<ISettingsFormProps> = ({
           <TextButton
             btn="btn-signup"
             text="Change profile avatar"
-            clickAction={() => setFormType("avatar")}
+            clickAction={() => {
+              setFormType("avatar");
+              setSubmissionResult("");
+            }}
           />
           <TextButton
             btn="btn-warn"
             text="Change password"
-            clickAction={() => setFormType("pass")}
+            clickAction={() => {
+              setFormType("pass");
+              setSubmissionResult("");
+            }}
           />
         </>
       )}
       {formType === "pass" && (
         <>
-          <div>
+          <div
+            className="validation-error"
+            data-error={
+              validationErrors.passCurrent
+                ? validationErrors.passCurrent.message
+                : ""
+            }
+          >
             <label htmlFor="passCurrent">Current password</label>
             <input
               id="passCurrent"
@@ -222,11 +236,23 @@ export const SettingsForm: React.FC<ISettingsFormProps> = ({
               required
             />
           </div>
-          <div>
+          <div
+            className="validation-error"
+            data-error={
+              validationErrors.pass ? validationErrors.pass.message : ""
+            }
+          >
             <label htmlFor="pass">New password</label>
             <input id="pass" type="password" name="pass" required />
           </div>
-          <div>
+          <div
+            className="validation-error"
+            data-error={
+              validationErrors.passConfirm
+                ? validationErrors.passConfirm.message
+                : ""
+            }
+          >
             <label htmlFor="passConfirm">Confirm password</label>
             <input
               id="passConfirm"
@@ -243,7 +269,6 @@ export const SettingsForm: React.FC<ISettingsFormProps> = ({
       )}
       {formType === "avatar" && (
         <>
-          <div></div>
           <img
             className="avatar"
             src={
@@ -251,36 +276,45 @@ export const SettingsForm: React.FC<ISettingsFormProps> = ({
             }
             alt="avatar"
           />
-          <TextButton
-            btn={typeof avatar === "string" ? "btn-signup" : "btn-warn"}
-            text={
-              typeof avatar === "string" ? "Upload new avatar" : "Delete avatar"
+          {typeof avatar === "string" ? (
+            <TextButton
+              btn="btn-signup"
+              text="Upload new avatar"
+              clickAction={() => fileRef.current?.click()}
+              preventDefault={true}
+            />
+          ) : (
+            <TextButton
+              btn="btn-warn"
+              text="Delete avatar"
+              clickAction={async () => {
+                const response: { [key: string]: boolean | string } =
+                  await deleteAvatar();
+
+                // if deleted
+                if (response.result) {
+                  setUser({
+                    email: user.email,
+                    name: user.name,
+                    surname: user.surname,
+                    username: user.username,
+                    avatar: defaultAvatar,
+                  });
+
+                  setAvatar(defaultAvatar);
+                }
+
+                setSubmissionResult(response.message as string);
+              }}
+              preventDefault={true}
+            />
+          )}
+          <div
+            className="validation-error"
+            data-error={
+              validationErrors.avatar ? validationErrors.avatar.message : ""
             }
-            clickAction={
-              typeof avatar === "string"
-                ? () => fileRef.current?.click()
-                : async () => {
-                    const response: { [key: string]: boolean | string } =
-                      await deleteAvatar();
-
-                    // if deleted
-                    if (response.result) {
-                      setUser({
-                        email: user.email,
-                        name: user.name,
-                        surname: user.surname,
-                        username: user.username,
-                        avatar: defaultAvatar,
-                      });
-
-                      setAvatar(defaultAvatar);
-                    }
-
-                    exposeSubmissionResult(response.message as string);
-                  }
-            }
-          />
-          <div>
+          >
             <input
               ref={fileRef}
               type="file"
@@ -289,7 +323,13 @@ export const SettingsForm: React.FC<ISettingsFormProps> = ({
               required
             />
           </div>
-          <div id="stepBack" onClick={() => setFormType("basics")}>
+          <div
+            id="stepBack"
+            onClick={() => {
+              setFormType("basics");
+              setSubmissionResult("");
+            }}
+          >
             <img src={chevron} alt="chevron" />
             <img src={chevron} alt="chevron" />
           </div>
