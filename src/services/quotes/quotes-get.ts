@@ -53,7 +53,7 @@ export const getQuotes: Function = async (
     response = await fetch(
       `${
         process.env.REACT_APP_BASE_URL
-          ? `https://${process.env.REACT_APP_BASE_URL}`
+          ? process.env.REACT_APP_BASE_URL
           : "http://localhost:3000"
       }/quotes?search=${search}&author=${author}&limit=${limit}`,
       requestOptions
