@@ -27,7 +27,11 @@ export const postQuote: Function = async (
 
   try {
     response = await fetch(
-      "http://localhost:3000/quotes/me/myquote",
+      `${
+        process.env.REACT_APP_BASE_URL
+          ? process.env.REACT_APP_BASE_URL
+          : "http://localhost:3000"
+      }/quotes/me/myquote`,
       requestOptions
     );
   } catch (error) {

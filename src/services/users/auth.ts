@@ -26,7 +26,14 @@ export const signup: Function = async (
 
   let response: Response;
   try {
-    response = await fetch("http://localhost:3000/auth/signup", requestOptions);
+    response = await fetch(
+      `${
+        process.env.REACT_APP_BASE_URL
+          ? process.env.REACT_APP_BASE_URL
+          : "http://localhost:3000"
+      }/auth/signup`,
+      requestOptions
+    );
   } catch (error: any) {
     return { result: false, message: error };
   }
@@ -67,7 +74,14 @@ export const login: Function = async (
   let response: Response;
 
   try {
-    response = await fetch("http://localhost:3000/auth/login", requestOptions);
+    response = await fetch(
+      `${
+        process.env.REACT_APP_BASE_URL
+          ? process.env.REACT_APP_BASE_URL
+          : "http://localhost:3000"
+      }/auth/login`,
+      requestOptions
+    );
   } catch (error: any) {
     return { result: false, message: error.message };
   }

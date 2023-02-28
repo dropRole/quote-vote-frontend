@@ -25,7 +25,14 @@ export const getUserInfo: Function = async (): Promise<{
       avatar: string;
     };
   try {
-    response = await fetch("http://localhost:3000/auth/me", requestOptions);
+    response = await fetch(
+      `${
+        process.env.REACT_APP_BASE_URL
+          ? process.env.REACT_APP_BASE_URL
+          : "http://localhost:3000"
+      }/auth/me`,
+      requestOptions
+    );
   } catch (error) {
     return { username: "", name: "", surname: "", email: "", avatar: "" };
   }
@@ -40,7 +47,9 @@ export const getUserInfo: Function = async (): Promise<{
 };
 
 // stream user avatar
-export const getAvatar: Function = async (path: string): Promise<Blob | string> => {
+export const getAvatar: Function = async (
+  path: string
+): Promise<Blob | string> => {
   const headers: Headers = new Headers();
   headers.append("Content-Type", "image/*");
 
@@ -75,7 +84,11 @@ export const getUserKarma: Function = async (
 
   try {
     response = await fetch(
-      `http://localhost:3000/quotes/karma/${username}`,
+      `${
+        process.env.REACT_APP_BASE_URL
+          ? process.env.REACT_APP_BASE_URL
+          : "http://localhost:3000"
+      }/quotes/karma/${username}`,
       requestOptions
     );
   } catch (error) {
@@ -84,5 +97,5 @@ export const getUserKarma: Function = async (
 
   const userKarma: { quotes: number; karma: number } = await response.json();
 
-  return userKarma
+  return userKarma;
 };

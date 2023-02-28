@@ -8,10 +8,14 @@ export const deleteQuote: Function = async (id: string): Promise<boolean> => {
   };
 
   let response: Response;
-  
+
   try {
     response = await fetch(
-      `http://localhost:3000/quotes/me/${id}`,
+      `${
+        process.env.REACT_APP_BASE_URL
+          ? process.env.REACT_APP_BASE_URL
+          : "http://localhost:3000"
+      }/quotes/me/${id}`,
       requestOptions
     );
   } catch (error) {

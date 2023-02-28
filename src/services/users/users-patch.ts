@@ -23,7 +23,11 @@ export const updateBasics = async (
 
   try {
     response = await fetch(
-      "http://localhost:3000/auth/me/basics",
+      `${
+        process.env.REACT_APP_BASE_URL
+          ? process.env.REACT_APP_BASE_URL
+          : "http://localhost:3000"
+      }/auth/me/basics`,
       requestOptions
     );
   } catch (error: any) {
@@ -76,7 +80,11 @@ export const updatePassword = async (
 
   try {
     response = await fetch(
-      "http://localhost:3000/auth/me/pass",
+      `${
+        process.env.REACT_APP_BASE_URL
+          ? process.env.REACT_APP_BASE_URL
+          : "http://localhost:3000"
+      }/auth/me/pass`,
       requestOptions
     );
   } catch (error: any) {
@@ -117,7 +125,11 @@ export const updateAvatar = async (
 
   try {
     response = await fetch(
-      "http://localhost:3000/auth/me/avatar-upload",
+      `${
+        process.env.REACT_APP_BASE_URL
+          ? process.env.REACT_APP_BASE_URL
+          : "http://localhost:3000"
+      }/auth/me/avatar-upload`,
       requestOptions
     );
   } catch (error: any) {

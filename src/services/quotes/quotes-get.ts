@@ -4,6 +4,7 @@ import { IQuote } from "../../App";
 export const getRandomQuote: Function = async (): Promise<IQuote> => {
   const headers: Headers = new Headers();
   headers.append("Authorization", `Bearer ${localStorage.getItem("JWT")}`);
+  headers.append("Access-Control-Allow-Origin", "*");
 
   const requestOptions: { method: string; headers: Headers } = {
     method: "GET",
@@ -13,7 +14,11 @@ export const getRandomQuote: Function = async (): Promise<IQuote> => {
   let response: Response;
   try {
     response = await fetch(
-      "http://localhost:3000/quotes/rand/one",
+      `${
+        process.env.REACT_APP_BASE_URL
+          ? process.env.REACT_APP_BASE_URL
+          : "http://localhost:3000"
+      }/quotes/rand/one`,
       requestOptions
     );
   } catch (error) {
@@ -46,10 +51,13 @@ export const getQuotes: Function = async (
   let response: Response;
   try {
     response = await fetch(
-      `http://localhost:3000/quotes?search=${search}&author=${author}&limit=${limit}`,
+      `${
+        process.env.REACT_APP_BASE_URL
+          ? `https://${process.env.REACT_APP_BASE_URL}`
+          : "http://localhost:3000"
+      }/quotes?search=${search}&author=${author}&limit=${limit}`,
       requestOptions
     );
-
   } catch (error) {
     return [];
   }

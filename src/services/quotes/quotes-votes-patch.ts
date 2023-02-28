@@ -6,7 +6,7 @@ export const voteOnQuote: Function = async (
   const headers: Headers = new Headers();
   headers.append("Authorization", `Bearer ${localStorage.getItem("JWT")}`);
 
-  const requestOptions: { method: string, headers: Headers } = {
+  const requestOptions: { method: string; headers: Headers } = {
     method: "PATCH",
     headers: headers,
   };
@@ -14,7 +14,11 @@ export const voteOnQuote: Function = async (
   let response: Response;
   try {
     response = await fetch(
-      `http://localhost:3000/quotes/${id}/${vote ? "upvote" : "downvote"}`,
+      `${
+        process.env.REACT_APP_BASE_URL
+          ? process.env.REACT_APP_BASE_URL
+          : "http://localhost:3000"
+      }/quotes/${id}/${vote ? "upvote" : "downvote"}`,
       requestOptions
     );
   } catch (error) {

@@ -1,5 +1,7 @@
 // update a given quote
-export const updateQuote: Function = async (form: HTMLFormElement): Promise<boolean> => {
+export const updateQuote: Function = async (
+  form: HTMLFormElement
+): Promise<boolean> => {
   const headers: Headers = new Headers();
   headers.append("Authorization", `Bearer ${localStorage.getItem("JWT")}`);
   headers.append("Content-Type", "application/x-www-form-urlencoded");
@@ -27,7 +29,11 @@ export const updateQuote: Function = async (form: HTMLFormElement): Promise<bool
 
   try {
     response = await fetch(
-      `http://localhost:3000/quotes/me/myquote/${formData.get("id")}`,
+      `${
+        process.env.REACT_APP_BASE_URL
+          ? process.env.REACT_APP_BASE_URL
+          : "http://localhost:3000"
+      }/quotes/me/myquote/${formData.get("id")}`,
       requestOptions
     );
   } catch (error) {
