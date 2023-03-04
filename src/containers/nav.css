@@ -26,7 +26,7 @@
   nav.flex-column {
     flex-direction: column;
   }
-  
+
   nav.flex-row {
     flex-direction: row;
   }
@@ -45,12 +45,12 @@
   div#menu.w-100 {
     width: 100%;
   }
-  
+
   div#menu.auto {
     width: auto;
   }
 
-  div#menu > div{
+  div#menu > div:not(div#auth) {
     display: flex;
 
     width: 100%;
@@ -59,6 +59,10 @@
   div#profileAvatar {
     justify-content: start !important;
     gap: 0px 20px;
+  }
+
+  div#authButtons {
+    flex-direction: column;
   }
 }
 
@@ -69,6 +73,8 @@
 
   div#inscription {
     flex-basis: 50%;
+    flex-grow: 0 !important;
+    justify-content: start!important;
   }
 
   div#menu {
@@ -76,9 +82,9 @@
   }
 
   div#menu > div {
-    display: flex!important;
+    display: flex !important;
 
-    opacity: 1!important;
+    opacity: 1 !important;
   }
 
   div#profileAvatar {
@@ -130,6 +136,11 @@ div#menu > div {
   align-items: center;
 
   cursor: pointer;
+}
+
+div#authButtons {
+  display: flex;
+  gap: 9px;
 }
 
 img.avatar {

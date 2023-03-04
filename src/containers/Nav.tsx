@@ -48,6 +48,10 @@ export const Nav: React.FC<INavProps> = ({
 
   const [avatar, setAvatar] = useState<string | Blob>(user.avatar);
 
+  const [authButtonsDisplay, setAuthButtonsDisplay] = useState("d-none");
+
+  const [authButtonsOpacity, setAuthButtonsOpacity] = useState("opacity-0");
+
   useEffect(() => setAvatar(user.avatar), [user.avatar]);
 
   // controls navbar collapsing setup
@@ -74,23 +78,31 @@ export const Nav: React.FC<INavProps> = ({
         setMenuWidth("w-100");
 
         setMenuItemDisplay("d-flex");
+
+        setAuthButtonsDisplay("d-flex");
       }, 250);
 
       setTimeout(() => {
         setMenuItemOpacity("opacity-1");
+
+        setAuthButtonsOpacity("opacity-1");
       }, 500);
     } else {
       setMenuItemOpacity("opacity-0");
-      
+
+      setAuthButtonsOpacity("opacity-0");
+
       setTimeout(() => {
         setNavheight("uncollapse");
 
         setMenuItemDisplay("d-none");
 
         setInscriptionDisplay("d-block");
-        
+
         setAddBtnDisplay("d-block");
-      }, 250)
+
+        setAuthButtonsDisplay("d-none");
+      }, 250);
 
       setTimeout(() => {
         setNavFlexDirection("flex-row");
@@ -113,7 +125,12 @@ export const Nav: React.FC<INavProps> = ({
         } ${hamBtnAlign}`}
         clickAction={collapseNavbar}
       />
-      <div id="inscription">
+      <div
+        id="inscription"
+        className={
+          !localStorage.getItem("JWT") ? "f-grow-1 justify-end" : ""
+        }
+      >
         <p
           className={`${inscriptionDisplay} ${inscriptionOpacity}`}
           onClick={() => (window.location.href = "/")}
@@ -182,7 +199,10 @@ export const Nav: React.FC<INavProps> = ({
             </div>
           </>
         ) : (
-          <>
+          <div
+            id="authButtons"
+            className={`${authButtonsDisplay} ${authButtonsOpacity}`}
+          >
             {window.location.pathname !== "/signup" && (
               <div className="justify-center">
                 <TextButton
@@ -201,7 +221,7 @@ export const Nav: React.FC<INavProps> = ({
                 />
               </div>
             )}
-          </>
+          </div>
         )}
       </div>
     </nav>
