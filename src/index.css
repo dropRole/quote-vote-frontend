@@ -79,7 +79,7 @@
     flex-basis: 45%;
     flex-grow: 0;
   }
-  
+
   section#introSection > div:nth-child(2) {
     flex-basis: 30%;
     flex-grow: 0;
@@ -123,6 +123,10 @@
     width: 256px;
     height: 256px;
   }
+
+  #modalBox {
+    height: 60%;
+  }
 }
 
 :root {
@@ -141,6 +145,8 @@ section {
 section.quotes > p.nought-quotes {
   font-size: 12px;
   font-style: italic;
+
+  text-align:center;
 }
 
 .h1 {
@@ -222,12 +228,20 @@ p#notFound {
   justify-content: center !important;
 }
 
-.align-self-start{
-  align-self: start!important;
+.justify-end {
+  justify-content: end !important;
 }
 
-.align-self-center{
-  align-self: center!important;
+.align-self-start {
+  align-self: start !important;
+}
+
+.align-self-center {
+  align-self: center !important;
+}
+
+.f-grow-1 {
+  flex-grow: 1 !important;
 }
 
 .opacity-1 {
