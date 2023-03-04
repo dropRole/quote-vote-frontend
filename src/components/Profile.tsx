@@ -87,7 +87,7 @@ export const Profile: React.FC<IProfileSectionProps> = ({
 
       const most = await getQuotes("most", profileUsername, 10);
 
-      const voted = await getQuotes("voted", "", 10);
+      const voted = await getQuotes("voted", profileUsername, 10);
 
       setAnyVotedQuotes(voted.length === 0 ? false : true);
 
